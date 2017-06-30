@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+
+echo -n "$(acpi -b | sed -e 's/^[^:]\+:\s*\w\+,\s*\([0-9]\+%\).*/\1/')"
+
+case "$(acpi | sed -e 's/^[^:]\+:\s*\(\w\+\).*/\U\1/')" in
+    CHARGING) echo -n +;;
+    DISCHARGING) echo -n -;; 
+esac
+
