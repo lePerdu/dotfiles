@@ -2,10 +2,10 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/zach/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # Do not display username/host unless as a different user
-export DEFAULT_USER=zach
+export DEFAULT_USER=
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -54,11 +54,10 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(archlinux chucknorris colored-man-pages common-aliases git \
-    lol man nyan python sudo tmux zsh-syntax-highlighting)
+plugins=(colored-man-pages common-aliases git man mvn node npm python sudo \
+	tmux zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
-source ~/.profile
 
 # User configuration
 
@@ -84,9 +83,6 @@ export ARCHFLAGS="-arch x86_64"
 alias df="df -h"
 alias du="du -h"
 alias free="free -h"
-
-# Start session with Chuck Norris quote
-chuck_cow
 
 [[ -z "$TMUX" && -o interactive ]] && exec tmux
 
