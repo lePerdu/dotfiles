@@ -1,0 +1,24 @@
+
+xft.dpi: 96
+xft.antialias: 1
+xft.hinting: 1
+xft.rgba: rgb
+
+urxvt.depth: 32
+
+urxvt.background: [90]#000000
+urxvt.foreground: 7
+
+urxvt.font: xft:Dina:pixelsize=12
+urxvt.boldFont: xft:Dina:style=Bold
+urxvt.italicFont: xft:Dina
+urxvt.boldItalic: xft:Dina:style=Bold Italic
+
+urxvt.cursorBlink: true
+urxvt.pointerBlank: true
+
+urxvt.scrollBar: false
+urxvt.scrollTtyOutput: false
+urxvt.scrollWithBuffer: true
+urxvt.scrollTtyKeypress: true
+

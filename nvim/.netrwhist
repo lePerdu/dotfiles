@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_1='/home/zach/workspace/checkerer/src/game_2d'
+let g:netrw_dirhist_2='/home/zach/workspace/checkerer/src/game_2d/shaders'
+let g:netrw_dirhist_3='/home/zach/workspace/checkerer/src/game_2d'
+let g:netrw_dirhist_4='/home/zach/workspace/checkerer/src/game_2d/shaders'
+let g:netrw_dirhist_5='/home/zach/.nvim'
