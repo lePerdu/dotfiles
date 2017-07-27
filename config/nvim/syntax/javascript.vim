@@ -25,16 +25,20 @@ if version < 600 && exists("javaScript_fold")
   unlet javaScript_fold
 endif
 
+syn match javaScriptComentTag "@\w\+" contained
+
 syn keyword javaScriptCommentTodo      TODO FIXME XXX TBD contained
 syn match   javaScriptLineComment      "\/\/.*" contains=@Spell,javaScriptCommentTodo
 syn match   javaScriptCommentSkip      "^[ \t]*\*\($\|[ \t]\+\)"
-syn region  javaScriptComment	       start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo
+syn region  javaScriptComment	       start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,javaScriptComentTag
 syn match   javaScriptSpecial	       "\\\d\d\d\|\\."
 syn region  javaScriptStringD	       start=+"+  skip=+\\\\\|\\"+  end=+"\|$+	contains=javaScriptSpecial,@htmlPreproc
 syn region  javaScriptStringS	       start=+'+  skip=+\\\\\|\\'+  end=+'\|$+	contains=javaScriptSpecial,@htmlPreproc
 
 syn match   javaScriptSpecialCharacter "'\\.'"
-syn match   javaScriptNumber	       "-\=\<\d\+L\=\>\|0[xX][0-9a-fA-F]\+\>"
+syn match   javaScriptNumber	       "\<\d\+L\=\>\|0[xX][0-9a-fA-F]\+\>"
+syn match   javaScriptNumber           "\v<(\d*\.\d+|\d\+\.\d*)>"
+syn match   javaScriptNumber           "\v<(\d*\.\d+|\d\+\.\d*|\d\+)[eE][+\-]?\d\+>"
 syn region  javaScriptRegexpString     start=+/[^/*]+me=e-1 skip=+\\\\\|\\/+ end=+/[gim]\{0,2\}\s*$+ end=+/[gim]\{0,2\}\s*[;.,)\]}]+me=e-1 contains=@htmlPreproc oneline
 syn region  javaScriptTemplateLiteral  start="`" skip="\\`" end="`" keepend extend contains=javaScriptTemplateVar
 syn region  javaScriptTemplateVar      matchgroup=javaScriptBraces start="\\\@<!\${" end="\\\@<!}" contained contains=TOP,javaScriptComment,javaScriptLineComment
@@ -43,22 +47,39 @@ syn keyword javaScriptConditional	if else switch
 syn keyword javaScriptRepeat		while for do in of
 syn keyword javaScriptBranch		break continue
 syn keyword javaScriptOperator		new delete instanceof typeof
-syn keyword javaScriptType		Array Boolean Date Function Number Object String RegExp
-syn keyword javaScriptStatement		return with
+syn keyword javaScriptType Array TypedArray ArrayBuffer Float32Array
+syn keyword javaScriptType Float64Array Int16Array Int32Array Int8Array
+syn keyword javaScriptType Uint16Array Uint32Array Uint8Array
+syn keyword javaScriptType Uint8ClampedArray AsyncFunction Atomics Boolean
+syn keyword javaScriptType DataView Date Error EvalError
+syn keyword javaScriptType Function Generator GeneratorFunction Infinity
+syn keyword javaScriptType InternalError Intl Iterator JSON
+syn keyword javaScriptType Map Math NaN Number Object ParallelArray Promise
+syn keyword javaScriptType Proxy RangeError ReferenceError
+syn keyword javaScriptType Reflect RegExp SIMD SharedArrayBuffer Set
+syn keyword javaScriptType StopIteration String Symbol
+syn keyword javaScriptType SyntaxError TypeError URIError WeakMap WeakSet
+syn keyword javaScriptType WebAssembly
+
+syn keyword javaScriptStatement		return with yield
 syn keyword javaScriptBoolean		true false
 syn keyword javaScriptNull		null undefined
 syn keyword javaScriptIdentifier	arguments this super var let const
 syn keyword javaScriptLabel		case default
 syn keyword javaScriptException		try catch finally throw
-syn keyword javaScriptMessage		alert confirm prompt status
-syn keyword javaScriptGlobal		self window top parent
-syn keyword javaScriptMember		document event location
+syn keyword javaScriptMessage		confirm prompt
+syn keyword javaScriptGlobal		self window
+syn keyword javaScriptMember		document
 syn keyword javaScriptDeprecated	escape unescape
 syn keyword javaScriptImport            import export as from default
 syn keyword javaScriptClass             class extends static
 "syn keyword javaScriptReserved		abstract boolean byte char debugger double enum final float goto implements int interface long native package private protected public short synchronized throws transient volatile
 
-" Don't highlight stuff when accessed as properties.
+" These are commonly used as variable names
+"syn keyword javaScriptTooMuchHighlighting alert status top parent event location
+
+" Don't highlight anything when accessed as properties (so that keywords can be
+" used as function/property names, even though this is bad practice).
 " Do highlight stuff after the spread operator (...).
 syn match  javaScriptProperty		"\v(.\.)@<!\.\k+"
 
@@ -98,6 +119,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptComment		Comment
   HiLink javaScriptLineComment		Comment
   HiLink javaScriptCommentTodo		Todo
+  HiLink javaScriptComentTag		PreProc
   HiLink javaScriptSpecial		Special
   HiLink javaScriptStringS		String
   HiLink javaScriptStringD		String
@@ -111,7 +133,8 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptType			Type
   HiLink javaScriptStatement		Statement
   HiLink javaScriptFunction		Function
-  HiLink javaScriptArrow		Function
+  HiLink javaScriptArrow		javaScriptFunction
+  HiLink javaScriptFuncCall		Function
   HiLink javaScriptBraces		Function
   HiLink javaScriptError		Error
   HiLink javaScrParenError		javaScriptError

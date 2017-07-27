@@ -2,12 +2,15 @@
 
 set showcmd
 set noshowmode
+set laststatus=2
+set showtabline=2
+
 set textwidth=80
 set colorcolumn=+1
 set cursorline
 set number
 let &showbreak = '> '
-set notildeop
+set isfname-==
 
 set ignorecase
 set smartcase
@@ -18,14 +21,16 @@ set splitright
 set nostartofline
 
 set nojoinspaces
-set autowrite
 set undofile
+set autowrite
 set backup
 set undodir=~/.local/share/nvim/undo,.
 set backupdir=~/.local/share/nvim/backup,.
 
 set formatoptions=tcroqj
 set pastetoggle=<F10>
+" set spelltoggle=<F9>
+noremap <silent> <F9> :set spell!<CR>
 
 set mouse=a
 set clipboard=unnamed,unnamedplus
@@ -45,15 +50,17 @@ syntax enable
 " Also don't do it when the mark is in the first line, that is the default
 " position when opening a file.
 autocmd BufReadPost *
-            \ if line("'\"") > 1 && line("'\"") <= line("$") |
-            \   execute "normal! g`\"" |
-            \ endif
+			\ if line("'\"") > 1 && line("'\"") <= line("$") |
+			\   execute "normal! g`\"" |
+			\ endif
 
 " No indent from switch to case statement.
 " No indent from class declaration to public/protected/private labels.
 " No Indent after  namespace declaration.
 set cinoptions=:0g0N-si0
 
+set preserveindent
+set copyindent
 set expandtab
 set tabstop=4
 set softtabstop=4
@@ -70,15 +77,15 @@ endfunction
 
 " Like 'w' and 'b' but split words in camelCase or with_underscores
 noremap <silent> <C-n>
-            \ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'sw')<CR>
+			\ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'sw')<CR>
 noremap <silent> <C-p>
-            \ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'bsw')<CR>
+			\ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'bsw')<CR>
 
 " Camel case/underscore analogs of 'e' and 'ge'
 nnoremap <silent> g<C-n>
-            \ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'sw')<CR>
+			\ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'sw')<CR>
 nnoremap <silent> g<C-p>
-            \ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'bsw')<CR>
+			\ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'bsw')<CR>
 
 function! s:ConvertCamelUnderscore()
 	let l:lnum = line('.')
@@ -163,11 +170,59 @@ endfunction
 " Turn current word from camelCase into underscore_separated and vice versa.
 nnoremap <silent> <Leader>_ :call <SID>ConvertCamelUnderscore()<CR>
 
-" Global search and replace
+" Start a global substitute command
 nnoremap <Leader>s :<C-U>%s//g<Left><Left>
+" Start a substitute command in the current visual region
 " '<,'> is implicit when entering command mode from visual mode
 vnoremap <Leader>s :s//g<Left><Left>
 
+" Start a global substitute command for the word under the cursor (search
+" pattern from * command).
+nnoremap <Leader>S :%s/\<<C-R><C-W>\>//g<Left><Left>
+" Start a global substitute command for the text selected.
+" TODO Find a way to not take up a register
+vnoremap <Leader>S y:%s/<C-R>"//g<Left><Left>
+
+vnoremap <Leader>T !sort<Space>
+
+" This makes more sense and yy already yanks the whole line
+nnoremap Y y$
+
+" Indent text on paste
+" TODO Don't indent when 'paste' is set
+noremap p p=']
+noremap P P=']
+noremap <Leader>p p
+noremap <Leader>P P
+
+" Remove current line and paste ([P - don't copy current line to register)
+" These are extra mappings (one of which performs the complementary of the
+" action expected, anyway).
+" TODO Don't use visual mode because it overrides previous selection
+nmap [p VP
+nmap [P "_ddP
+vmap [P "_dP
+
+function! s:SwapLeft()
+	let l:col = col('.')
+	if l:col < 2
+		return
+	endif
+
+	let l:lnum = line('.')
+	let l:line = getline(l:lnum)
+
+	call setline(l:lnum, strpart(l:line, 0, l:col-2) . l:line[l:col-1] . l:line[l:col-2] . strpart(l:line, l:col))
+endfunction
+
+" Swap adjacent characters/lines
+" TODO (maybe) indent the lines when swapped.
+nnoremap <silent> <C-H> :call <SID>SwapLeft()<CR>h
+nnoremap <silent> <C-J> :.move .+1<CR>=k
+nnoremap <silent> <C-K> :.-1move .<CR>k=j
+nnoremap <silent> <C-L> l:call <SID>SwapLeft()<CR>
+" Map CTRL-L (redraw screen) to something else
+nnoremap <Leader>l <C-L>
 
 " Easier way to turn off sometimes annoying highlighted searches
 noremap <silent> <S-Tab> :nohlsearch<CR>
@@ -176,8 +231,11 @@ nnoremap <silent> <Leader>n :nohlsearch<CR>
 
 " Move tabs
 " Moving a tab past the end results in the tab being wrapped to the other side
-nnoremap <silent> g> :<C-U>try \| execute 'tabmove +' . v:count1 \| catch \| tabmove 0 \| endtry<CR>
-nnoremap <silent> g< :<C-U>try \| execute 'tabmove -' . v:count1 \| catch \| tabmove \| endtry<CR>
+nnoremap <silent> g> :<C-U>try<CR>execute 'tabmove +' . v:count1<CR>catch<CR>tabmove 0<CR>execute 'tabmove +' . (v:count1-1)<CR>endtry<CR>
+nnoremap <silent> g< :<C-U>try<CR>execute 'tabmove -' . v:count1<CR>catch<CR>tabmove<CR>execute 'tabmove -' . (v:count1-1)<CR>endtry<CR>
+
+" Open/close NetRW window on the left
+nnoremap <silent> gl :Lexplore<CR>
 
 " Save with sudo privileges
 command! WriteSudo w! !sudo tee % > /dev/null
@@ -190,11 +248,17 @@ cabbrev Sw SearchWhite
 command! RemoveWhite %s/\v\s+$//eg
 cabbrev Rw RemoveWhite
 
+" Some abbreviations for common things I mistype
+iabbrev fo of
+iabbrev Fo Of
+iabbrev teh the
+iabbrev Teh The
+
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'Shougo/deoplete.nvim'
-Plug 'vim-airline/vim-airline'
+Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'jiangmiao/auto-pairs'
+Plug 'vim-airline/vim-airline'
 Plug 'joshdick/onedark.vim'
 
 Plug 'tpope/vim-surround'
@@ -203,35 +267,52 @@ Plug 'tpope/vim-repeat'
 
 call plug#end()
 
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 20
+
 let g:deoplete#enable_at_startup = 1
 
-if $TERM =~ '.*256color'
-    set termguicolors
-    set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,
-                \a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,
-                \sm:block-blinkwait175-blinkoff150-blinkon175
-    autocmd VimLeave *
-                \ set guicursor=a:ver25-blinkwait700-blinkoff250-blinkon200
+" Tab and Shift-Tab instead of <C-N> and <C-P>
+inoremap <expr> <Tab> pumvisible() ? "\<C-N>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-P>" : "\<S-Tab>"
 
-    let g:onedark_termcolors = 256
-    let g:onedark_terminal_italics = 1
+" Enter inserts new line (not select match)
+function! s:my_cr_function() abort
+	return deoplete#close_popup() . "\<CR>"
+endfunction
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+
+" It doesn't hurt anything if the italics don't work
+let g:onedark_terminal_italics = 1
+if $TERM =~ '.*256color'
+	if $COLORTERM == "truecolor" || $COLORTERM == "24bit"
+		set termguicolors
+	endif
+
+	set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,
+				\a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,
+				\sm:block-blinkwait175-blinkoff150-blinkon175
+	autocmd VimLeave *
+				\ set guicursor=a:ver25-blinkwait700-blinkoff250-blinkon200
+
+	let g:onedark_termcolors = 256
 else
-    let g:onedark_termcolors = 16
-    let g:onedark_terminal_italics = 0
+	let g:onedark_termcolors = 16
 endif
 
 let g:airline_theme = 'onedark'
 let g:airline_symbols_ascii = 1
-let g:airline_left_sep = '>'
-let g:airline_right_sep = '<'
-let g:airline#extensions#tabline#left_sep = '>'
-let g:airline#extensions#tabline#right_sep = '<'
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_tabs = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#show_close_button = 0
 let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#tabline#tab_nr_type = 2
+
+let g:airline#extensions#whitespace#mixed_indent_algo = 1
+let g:airline#extensions#c_like_langs =
+			\ ['c', 'cpp', 'java', 'javascript', 'php', 'glsl']
 
 colorscheme onedark
 

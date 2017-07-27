@@ -27,7 +27,9 @@ if command_exists zsh; then
 		echo "Installing custom Oh-my-zsh plugins and themes to $HOME/.oh-my-zsh/custom"
 		cp -r oh-my-zsh-custom/* $HOME/.oh-my-zsh/custom/
 	fi
-elif command_exists bash; then
+fi
+
+if command_exists bash; then
 	if test -f $HOME/.bashrc; then
 		echo "Copying $HOME/.bashrc to $HOME/.bashrc.old"
 		mv $HOME/.bashrc $HOME/.bashrc.old
@@ -55,6 +57,8 @@ if command_exists nvim; then
 
 	echo "Linking $HOME/.nvimrc to $HOME/.config/nvim/init.vim"
 	ln -sf $HOME/.config/nvim/init.vim $HOME/.nvimrc
+
+	nvim -c ':PlugInstall' -c ':quit'
 fi
 
 if test -f $HOME/.Xdefault; then
