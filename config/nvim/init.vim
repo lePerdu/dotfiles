@@ -201,7 +201,7 @@ noremap <Leader>P P
 " TODO Don't use visual mode because it overrides previous selection
 nmap [p VP
 nmap [P "_ddP
-vmap [P "_dP
+vmap [p "_dP
 
 function! s:SwapLeft()
 	let l:col = col('.')
