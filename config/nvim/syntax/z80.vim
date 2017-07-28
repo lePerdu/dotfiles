@@ -44,7 +44,7 @@ syn keyword z80Mnemonic rl rla rlc rlca rld rr rra rrc rrca rrd sla sra srl
 syn keyword z80Mnemonic djnz nop rst
 syn keyword z80Mnemonic di ei halt im in ind indr ini otdr otir out outd outi
 
-syn keyword z80Todo TODO contained 
+syn keyword z80Todo TODO contained
 
 syn match z80Comment /;.*$/ contains=z80Todo
 syn region z80String start=/"/ skip=/\\"/ end=/"/ oneline

@@ -25,11 +25,11 @@ syn match glslNumber "\v<0x\x+u?>"
 " Floating point number without dot with 'f' or 'lf'
 syn match glslFloat "\v<\d+l?f>"
 " Floating point number with dot
-syn match glslFloat "\v<\d+\.\d*(e[+\-]?\d+)?(l?f)?>"
+syn match glslFloat "\v<\d+\.\d*(e[+\-]?\d+)?%[lf]>"
 " Floating point number starting with dot
-syn match glslFloat "\v\.\d+(e[+\-]?\d+)?(l?f)?>"
+syn match glslFloat "\v\.\d+(e[+\-]?\d+)?%[lf]>"
 " FLoating point number without dot, with exponent
-syn match glslFloat "\v<\d+e[+\-]?\d+(l?f)?>"
+syn match glslFloat "\v<\d+e[+\-]?\d+%[lf]>"
 syn case match
 
 syn keyword glslTypeQual precision struct subroutine layout
@@ -44,8 +44,8 @@ syn keyword glslLayout invoations line_strip triangle_strip max_vertices stream
 syn keyword glslLayout shared packed std140 row_major column_major
 
 syn keyword glslInterpol smooth flat noperspective
-syn keyword glslIOStorage centroid invariant sample patch uniform in out
-syn keyword glslIOStorage inout attribute varying
+syn keyword glslStorage centroid invariant sample patch uniform in out
+syn keyword glslStorage inout attribute varying const
 
 syn keyword glslReserved common partition active asm class union enum
             \ typedef template this packed goto inline noinline volatile
@@ -71,7 +71,7 @@ syn keyword glslType mat3 dmat3 mat3x3 dmat3x3 mat3x4 dmat3x4
 syn keyword glslType mat4 dmat4 mat4x4 dmatx4
 
 syn keyword glslType sampler1D sampler2D sampler3D
-syn keyword glslType samplerCube sampler2DRect sampler1DArray sampler2DArray 
+syn keyword glslType samplerCube sampler2DRect sampler1DArray sampler2DArray
 syn keyword glslType samplerBuffer sampler2DMS sampler2DMSAray
 syn keyword glslType samplerCubeArray
 syn keyword glslType sampler1DSahdow sampler2DShadow sampler2DRectShadow
@@ -79,12 +79,12 @@ syn keyword glslType sampleraDArrayShadow sampler2DArrayShadow
 syn keyword glslType samplerCubceShadow samplerCubeArrayShadow
 syn keyword glslType isampler1D isampler2D isampler3D
 syn keyword glslType isamplerCube isampler2DRect isampler1DArray
-syn keyword glslType isampler2DArray 
+syn keyword glslType isampler2DArray
 syn keyword glslType isamplerBuffer isampler2DMS isampler2DMSAray
 syn keyword glslType isamplerCubeArray
 syn keyword glslType usampler1D usampler2D usampler3D
 syn keyword glslType usamplerCube usampler2DRect usampler1DArray
-syn keyword glslType usampler2DArray 
+syn keyword glslType usampler2DArray
 syn keyword glslType usamplerBuffer usampler2DMS usampler2DMSAray
 syn keyword glslType usamplerCubeArray
 
@@ -118,13 +118,13 @@ syn keyword glslFunction dFdx dFdy fwidth
 syn keyword glslFunction interpolateAtCentroid interpolateAtSample
 syn keyword glslFunction interpolateAtOffset
 syn keyword glslFunction noise1 noise2 noise3 noise4
+syn keyword glslFunction EmitStreamVertex EndStreamPrimitive EmitVertex
+syn keyword glslFunction EndPrimitive barrier
 
 syn match glslBuiltin "\<gl_\w\+"
 
-syn match glslOperator "\V\(+\|-\|*\|/\|%\|++\|--\|&\||\|^\|~\|&&\|||\|!\|>\|<\|==\|>=\|<=\|!=\|=\|+=\|-=\|*=\|/=\|?\|:\)"
-
-syn region	glslComment start="//" skip="\\$" end="$" keepend contains=glslTODO
-syn region	glslComment     start="/\*" end="\*/" extend contains=glslTODO
+syn region glslComment start="//" skip="\\$" end="$" keepend contains=glslTODO
+syn region glslComment start="/\*" end="\*/" extend contains=glslTODO
 syn keyword glslTODO TODO FIXME XXX contained
 
 syn region glslPreProc  start="^\s*#" skip="\\$" end="$"
@@ -137,11 +137,10 @@ hi def link glslTypeQual    Typedef
 hi def link glslPrecision   Special
 hi def link glslLayout      Keyword
 hi def link glslInterpol    String
-hi def link glslIOStorage   Include
+hi def link glslStorage     Include
 hi def link glslType        Type
 hi def link glslBuiltin     Constant
 hi def link glslFunction    Function
-hi def link glslOperator    Operator
 hi def link glslComment     Comment
 hi def link glslTODO        Todo
 hi def link glslPreProc     PreProc

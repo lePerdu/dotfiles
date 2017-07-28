@@ -32,8 +32,13 @@ set pastetoggle=<F10>
 " set spelltoggle=<F9>
 noremap <silent> <F9> :set spell!<CR>
 
-set mouse=a
-set clipboard=unnamed,unnamedplus
+if has('mouse')
+    set mouse=a
+endif
+
+if has('clipboard')
+    set clipboard=unnamed,unnamedplus
+endif
 
 " Do not end sentence after capital letter, exclamation point, or
 " question mark
@@ -50,9 +55,9 @@ syntax enable
 " Also don't do it when the mark is in the first line, that is the default
 " position when opening a file.
 autocmd BufReadPost *
-			\ if line("'\"") > 1 && line("'\"") <= line("$") |
-			\   execute "normal! g`\"" |
-			\ endif
+            \ if line("'\"") > 1 && line("'\"") <= line("$") |
+            \   execute "normal! g`\"" |
+            \ endif
 
 " No indent from switch to case statement.
 " No indent from class declaration to public/protected/private labels.
@@ -70,101 +75,101 @@ set notimeout
 let mapleader = '\'
 
 function! s:SearchCount(expr, flags)
-	for i in range(v:count1)
-		call search(a:expr, a:flags)
-	endfor
+    for i in range(v:count1)
+        call search(a:expr, a:flags)
+    endfor
 endfunction
 
 " Like 'w' and 'b' but split words in camelCase or with_underscores
 noremap <silent> <C-n>
-			\ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'sw')<CR>
+            \ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'sw')<CR>
 noremap <silent> <C-p>
-			\ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'bsw')<CR>
+            \ :<C-U>call <SID>SearchCount('\v(^\S\|\U\zs\u\|\L\zs\l)', 'bsw')<CR>
 
 " Camel case/underscore analogs of 'e' and 'ge'
 nnoremap <silent> g<C-n>
-			\ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'sw')<CR>
+            \ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'sw')<CR>
 nnoremap <silent> g<C-p>
-			\ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'bsw')<CR>
+            \ :<C-U>call <SID>SearchCount('\v(^\S\|\zs\U\u\|\zs\l\L)', 'bsw')<CR>
 
 function! s:ConvertCamelUnderscore()
-	let l:lnum = line('.')
-	let l:col = col('.')
-	let l:text = getline(l:lnum)
-	let l:linelen = strlen(l:text)
+    let l:lnum = line('.')
+    let l:col = col('.')
+    let l:text = getline(l:lnum)
+    let l:linelen = strlen(l:text)
 
-	if l:text[l:col-1] !~ '\w'
-		return
-	endif
+    if l:text[l:col-1] !~ '\w'
+        return
+    endif
 
-	let l:startpos = l:col-1
-	while l:text[l:startpos-1] =~ '\w' && l:startpos-1 > 0
-		let l:startpos -= 1
-	endwhile
+    let l:startpos = l:col-1
+    while l:text[l:startpos-1] =~ '\w' && l:startpos-1 > 0
+        let l:startpos -= 1
+    endwhile
 
-	let l:endpos = l:col-1
-	while l:text[l:endpos+1] =~ '\w'
-		let l:endpos += 1
-	endwhile
+    let l:endpos = l:col-1
+    while l:text[l:endpos+1] =~ '\w'
+        let l:endpos += 1
+    endwhile
 
-	let l:str = l:text[l:startpos:l:endpos]
-	let l:leading = matchstr(l:str, '^_*')
-	let l:following = matchstr(l:str, '_*$')
-	let l:str = l:str[strlen(l:leading):-strlen(l:following)-1]
-	" Length of string up to cursor position
-	let l:collen = l:col - l:startpos
-	if match(l:str, '\a_\+\a') >= 0
-		" Underscore separated
+    let l:str = l:text[l:startpos:l:endpos]
+    let l:leading = matchstr(l:str, '^_*')
+    let l:following = matchstr(l:str, '_*$')
+    let l:str = l:str[strlen(l:leading):-strlen(l:following)-1]
+    " Length of string up to cursor position
+    let l:collen = l:col - l:startpos
+    if match(l:str, '\a_\+\a') >= 0
+        " Underscore separated
 
-		" Multiple underscores are removed together
-		let l:us_split = split(l:str, '_\+')
-		let l:start_caps = 0
-		if l:str[0] =~ '\u'
-			let l:start_caps = 1
-		endif
+        " Multiple underscores are removed together
+        let l:us_split = split(l:str, '_\+')
+        let l:start_caps = 0
+        if l:str[0] =~ '\u'
+            let l:start_caps = 1
+        endif
 
-		let l:str = ""
-		for l:part in l:us_split
-			let l:str .= toupper(l:part[0]) . l:part[1:]
+        let l:str = ""
+        for l:part in l:us_split
+            let l:str .= toupper(l:part[0]) . l:part[1:]
 
-			if strlen(l:str) <= l:collen
-				let l:collen -= 1
-			endif
-		endfor
+            if strlen(l:str) <= l:collen
+                let l:collen -= 1
+            endif
+        endfor
 
-		if !l:start_caps
-			let l:str = tolower(l:str[0]) . l:str[1:]
-		endif
-	else
-		" Camel case
+        if !l:start_caps
+            let l:str = tolower(l:str[0]) . l:str[1:]
+        endif
+    else
+        " Camel case
 
-		let l:cc_split = split(l:str, '\(\ze\u\l\|\l\zs\ze\L\)')
+        let l:cc_split = split(l:str, '\(\ze\u\l\|\l\zs\ze\L\)')
 
-		" Whether or not the names should be made to start with lower case
-		let l:lower = 0
-		if l:cc_split[0] =~ '^\l'
-			let l:lower = 1
-		endif
+        " Whether or not the names should be made to start with lower case
+        let l:lower = 0
+        if l:cc_split[0] =~ '^\l'
+            let l:lower = 1
+        endif
 
-		let l:str = ""
-		for l:part in l:cc_split
-			if l:lower && l:part !~ '^\L\L\+$'
-				let l:str .= tolower(l:part[0]) . l:part[1:] . '_'
-			else
-				let l:str .= l:part . '_'
-			endif
+        let l:str = ""
+        for l:part in l:cc_split
+            if l:lower && l:part !~ '^\L\L\+$'
+                let l:str .= tolower(l:part[0]) . l:part[1:] . '_'
+            else
+                let l:str .= l:part . '_'
+            endif
 
-			if strlen(l:str) <= l:collen
-				let l:collen += 1
-			endif
-		endfor
-		let l:str = l:str[:-2]
-	endif
+            if strlen(l:str) <= l:collen
+                let l:collen += 1
+            endif
+        endfor
+        let l:str = l:str[:-2]
+    endif
 
-	call setline(l:lnum, l:text[0:l:startpos-1] .
-				\ l:leading . l:str . l:following .
-				\ l:text[l:endpos+1:])
-	call cursor(l:lnum, l:startpos + l:collen)
+    call setline(l:lnum, l:text[0:l:startpos-1] .
+                \ l:leading . l:str . l:following .
+                \ l:text[l:endpos+1:])
+    call cursor(l:lnum, l:startpos + l:collen)
 endfunction
 
 " Turn current word from camelCase into underscore_separated and vice versa.
@@ -204,15 +209,15 @@ nmap [P "_ddP
 vmap [p "_dP
 
 function! s:SwapLeft()
-	let l:col = col('.')
-	if l:col < 2
-		return
-	endif
+    let l:col = col('.')
+    if l:col < 2
+        return
+    endif
 
-	let l:lnum = line('.')
-	let l:line = getline(l:lnum)
+    let l:lnum = line('.')
+    let l:line = getline(l:lnum)
 
-	call setline(l:lnum, strpart(l:line, 0, l:col-2) . l:line[l:col-1] . l:line[l:col-2] . strpart(l:line, l:col))
+    call setline(l:lnum, strpart(l:line, 0, l:col-2) . l:line[l:col-1] . l:line[l:col-2] . strpart(l:line, l:col))
 endfunction
 
 " Swap adjacent characters/lines
@@ -231,15 +236,28 @@ nnoremap <silent> <Leader>n :nohlsearch<CR>
 
 " Move tabs
 " Moving a tab past the end results in the tab being wrapped to the other side
-nnoremap <silent> g> :<C-U>try<CR>execute 'tabmove +' . v:count1<CR>catch<CR>tabmove 0<CR>execute 'tabmove +' . (v:count1-1)<CR>endtry<CR>
-nnoremap <silent> g< :<C-U>try<CR>execute 'tabmove -' . v:count1<CR>catch<CR>tabmove<CR>execute 'tabmove -' . (v:count1-1)<CR>endtry<CR>
+nnoremap <silent> g> :try<CR>
+            \ execute 'tabmove +' . v:count1<CR>
+            \ catch<CR>
+            \ tabmove 0<CR>
+            \ execute 'tabmove +' . (v:count1-1)<CR>
+            \ endtry<CR>
+nnoremap <silent> g< :try<CR>
+            \ execute 'tabmove -' . v:count1<CR>
+            \ catch<CR>
+            \ tabmove<CR>
+            \ execute 'tabmove -' . (v:count1-1)<CR>
+            \ endtry<CR>
 
-" Open/close NetRW window on the left
-nnoremap <silent> gl :Lexplore<CR>
+nnoremap <silent> <C-Up> :cprev<CR>
+nnoremap <silent> <C-Down> :cnext<CR>
 
 " Save with sudo privileges
 command! WriteSudo w! !sudo tee % > /dev/null
 cabbrev Ws WriteSudo
+
+command! WriteSudoQuit Ws | q!
+cabbrev Wsq WriteSudoQuit
 
 " Show and remove lines with only whitespace
 " or ending in whitespace
@@ -278,26 +296,26 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-P>" : "\<S-Tab>"
 
 " Enter inserts new line (not select match)
 function! s:my_cr_function() abort
-	return deoplete#close_popup() . "\<CR>"
+    return deoplete#close_popup() . "\<CR>"
 endfunction
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 
 " It doesn't hurt anything if the italics don't work
 let g:onedark_terminal_italics = 1
 if $TERM =~ '.*256color'
-	if $COLORTERM == "truecolor" || $COLORTERM == "24bit"
-		set termguicolors
-	endif
+    if $COLORTERM == "truecolor" || $COLORTERM == "24bit"
+        set termguicolors
+    endif
 
-	set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,
-				\a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,
-				\sm:block-blinkwait175-blinkoff150-blinkon175
-	autocmd VimLeave *
-				\ set guicursor=a:ver25-blinkwait700-blinkoff250-blinkon200
+    set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,
+                \a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,
+                \sm:block-blinkwait175-blinkoff150-blinkon175
+    autocmd VimLeave *
+                \ set guicursor=a:ver25-blinkwait700-blinkoff250-blinkon200
 
-	let g:onedark_termcolors = 256
+    let g:onedark_termcolors = 256
 else
-	let g:onedark_termcolors = 16
+    let g:onedark_termcolors = 16
 endif
 
 let g:airline_theme = 'onedark'
@@ -312,7 +330,7 @@ let g:airline#extensions#tabline#tab_nr_type = 2
 
 let g:airline#extensions#whitespace#mixed_indent_algo = 1
 let g:airline#extensions#c_like_langs =
-			\ ['c', 'cpp', 'java', 'javascript', 'php', 'glsl']
+            \ ['c', 'cpp', 'java', 'javascript', 'php', 'glsl']
 
 colorscheme onedark
 
