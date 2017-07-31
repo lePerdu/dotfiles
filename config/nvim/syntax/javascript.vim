@@ -33,7 +33,7 @@ syn match javaScriptComentTag "@\w\+" contained
 syn keyword javaScriptCommentTodo       TODO FIXME XXX TBD contained
 syn match   javaScriptLineComment       "\/\/.*" contains=@Spell,javaScriptCommentTodo
 syn match   javaScriptCommentSkip       "^[ \t]*\*\($\|[ \t]\+\)"
-syn region  javaScriptCommentSkip       start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,javaScriptComentTag
+syn region  javaScriptComment           start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,javaScriptComentTag
 syn match   javaScriptSpecial           "\\\d\d\d\|\\."
 syn region  javaScriptStringD           start=+"+  skip=+\\\\\|\\"+  end=+"\|$+    contains=javaScriptSpecial,@htmlPreproc
 syn region  javaScriptStringS           start=+'+  skip=+\\\\\|\\'+  end=+'\|$+    contains=javaScriptSpecial,@htmlPreproc
