@@ -1,8 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
 command_exists() {
 	command -v $1 > /dev/null 2>&1
 }
+
+cd $(dirname $0)
+
+local CP_CMD=
+
+case $1 in
+	link|ln|)
+		$CP_CMD=ln
+		;;
+
+	copy|cp)
+		$CP_CMD="cp -r"
+		;;
+
+	*)
+		echo "usage: ./install.sh [copy|cp|link|ln]"
+		exit 1
+		;;
+esac
 
 if command_exists tmux; then
 	if test -f $HOME/.tmux.conf; then
@@ -11,8 +30,8 @@ if command_exists tmux; then
 	fi
 
 	echo "Installing .tmux.conf"
-	cp tmux.conf $HOME/.tmux.conf
-	cp -r config/tmux $HOME/.config/tmux
+	$CP_CMD tmux.conf $HOME/.tmux.conf
+	$CP_CMD -r config/tmux $HOME/.config/tmux
 fi
 
 if command_exists zsh; then
@@ -23,9 +42,9 @@ if command_exists zsh; then
 
 	if test -d $HOME/.oh-my-zsh; then
 		echo "Installing $HOME/.zshrc"
-		cp zshrc $HOME/.zshrc
+		$CP_CMD zshrc $HOME/.zshrc
 		echo "Installing custom Oh-my-zsh plugins and themes to $HOME/.oh-my-zsh/custom"
-		cp -r oh-my-zsh-custom/* $HOME/.oh-my-zsh/custom/
+		$CP_CMD -r oh-my-zsh-custom/* $HOME/.oh-my-zsh/custom/
 	fi
 fi
 
@@ -36,7 +55,7 @@ if command_exists bash; then
 	fi
 
 	echo "Installing $HOME/.bashrc"
-	cp bashrc $HOME/.bashrc
+	$CP_CMD bashrc $HOME/.bashrc
 fi
 
 if command_exists nvim; then
@@ -48,7 +67,7 @@ if command_exists nvim; then
 
 	echo "Installing $HOME/.config/nvim"
 	mkdir -p $HOME/.config # Just in case
-	cp -r config/nvim $HOME/.config/nvim
+	$CP_CMD -r config/nvim $HOME/.config/nvim
 
 	if test -f $HOME/.nvimrc; then
 		echo "Copying $HOME/.nvimrc to $HOME/.nvimrc.old"
@@ -67,5 +86,5 @@ if test -f $HOME/.Xdefault; then
 fi
 
 echo "Installing $HOME/.Xdefaults"
-cp Xdefaults $HOME/.Xdefaults
+$CP_CMD Xdefaults $HOME/.Xdefaults
 
