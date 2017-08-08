@@ -28,12 +28,14 @@ endif
 syn iskeyword @,48-57,_,192-255,$
 set iskeyword+=$
 
-syn match javaScriptComentTag "@\w\+" contained
+" For JSDoc-style annotations
+syn match javaScriptCommentTag "@\w\+" contained
+syn region javaScriptCommentInlineTag matchgroup=javaScriptCommentTag start="[^\\]\zs@{\k\+" skip="\\}" end="}" contained
 
 syn keyword javaScriptCommentTodo       TODO FIXME XXX TBD contained
 syn match   javaScriptLineComment       "\/\/.*" contains=@Spell,javaScriptCommentTodo
 syn match   javaScriptCommentSkip       "^[ \t]*\*\($\|[ \t]\+\)"
-syn region  javaScriptComment           start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,javaScriptComentTag
+syn region  javaScriptComment           start="/\*"  end="\*/" contains=@Spell,javaScriptCommentTodo,javaScriptCommentTag,javaScriptCommentInlineTag
 syn match   javaScriptSpecial           "\\\d\d\d\|\\."
 syn region  javaScriptStringD           start=+"+  skip=+\\\\\|\\"+  end=+"\|$+    contains=javaScriptSpecial,@htmlPreproc
 syn region  javaScriptStringS           start=+'+  skip=+\\\\\|\\'+  end=+'\|$+    contains=javaScriptSpecial,@htmlPreproc
@@ -81,10 +83,11 @@ syn keyword javaScriptType Proxy RangeError ReferenceError
 syn keyword javaScriptType Reflect RegExp SIMD SharedArrayBuffer Set
 syn keyword javaScriptType StopIteration String Symbol
 syn keyword javaScriptType SyntaxError TypeError URIError WeakMap WeakSet
-syn keyword javaScriptType WebAssembly
+syn keyword javaScriptType WebAssembly WebGLRenderingContext
+syn keyword javaScriptType WebGL2RenderingContext
 
 syn region javaScriptImportRegion start="\<import\>" end=";" end="$"
-            \ contains=ALL
+            \ contains=ALL,@Spell
 
 syn match javaScriptAccessor "\<\(get\|set\)\ze\_s\+\%(\[\_.\{-}\]\|\k\+\)"
 
@@ -139,7 +142,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
     HiLink javaScriptComment          Comment
     HiLink javaScriptLineComment      Comment
     HiLink javaScriptCommentTodo      Todo
-    HiLink javaScriptComentTag        PreProc
+    HiLink javaScriptCommentTag       PreProc
     HiLink javaScriptSpecial          Special
     HiLink javaScriptStringS          String
     HiLink javaScriptStringD          String

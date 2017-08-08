@@ -35,7 +35,7 @@ HYPHEN_INSENSITIVE="true"
 ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -65,6 +65,23 @@ source $ZSH/oh-my-zsh.sh
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
+
+if [[ $+command[nvim] ]]; then
+	EDITOR=nvim
+elif [[ $+command[vim] ]]; then
+	EDITOR=vim
+elif [[ $+command[vi] ]]; then
+	EDITOR=vi
+elif [[ $+command[ed] ]]; then
+	EDITOR=ed
+elif [[ $+command[emacs] ]]; then
+	EDITOR=emacs
+elif [[ $+command[nano] ]]; then
+	EDITOR=nano
+else
+	EDITOR=
+fi
+export EDITOR
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
