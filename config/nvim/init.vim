@@ -207,6 +207,7 @@ noremap <Leader>P P
 nmap [p VP
 nmap [P "_ddP
 vmap [p "_dP
+vmap [P "_dP
 
 function! s:SwapLeft()
     let l:col = col('.')
@@ -300,13 +301,11 @@ function! s:my_cr_function() abort
 endfunction
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 
-" It doesn't hurt anything if the italics don't work
-let g:onedark_terminal_italics = 1
-if $TERM =~ '.*256color'
-    if $COLORTERM == "truecolor" || $COLORTERM == "24bit"
-        set termguicolors
-    endif
+if $COLORTERM == "truecolor" || $COLORTERM == "24bit"
+    set termguicolors
+endif
 
+if $TERM =~ '.*256color' || &termguicolors
     set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,
                 \a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,
                 \sm:block-blinkwait175-blinkoff150-blinkon175
@@ -317,6 +316,9 @@ if $TERM =~ '.*256color'
 else
     let g:onedark_termcolors = 16
 endif
+
+" It doesn't hurt anything if the italics don't work
+let g:onedark_terminal_italics = 1
 
 let g:airline_theme = 'onedark'
 let g:airline_symbols_ascii = 1

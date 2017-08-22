@@ -9,10 +9,10 @@ urxvt.depth: 32
 urxvt.background: [90]#000000
 urxvt.foreground: 7
 
-urxvt.font: xft:Dina:pixelsize=12
-urxvt.boldFont: xft:Dina:style=Bold
-urxvt.italicFont: xft:Dina
-urxvt.boldItalic: xft:Dina:style=Bold Italic
+urxvt.font: xft:Dina:style=Regular:pixelsize=12
+urxvt.boldFont: xft:Dina:style=Bold:pixelsize=12
+urxvt.italicFont: xft:Dina:style=Italic:pixelsize=12
+urxvt.boldItalic: xft:Dina:style=Bold Italic:pixelsize=12
 
 urxvt.cursorBlink: true
 urxvt.pointerBlank: true
