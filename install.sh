@@ -70,6 +70,14 @@ if command_exists nvim; then
     nvim -c ':call dein#update()' -c ':quit'
 fi
 
+if command_exists kak; then
+    install_files config/kak $XDG_CONFIG_HOME/kak
+fi
+
+if command_exists vis; then
+    install_files config/vis $XDG_CONFIG_HOME/vis
+fi
+
 if test -f $HOME/.Xdefaults; then
     install_files Xdefaults $HOME/.Xdefaults
 fi
