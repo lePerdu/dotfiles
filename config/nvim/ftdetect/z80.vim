@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.z80,*.inc set filetype=z80
+au BufRead,BufNewFile *.z80,*.inc,*.lst set filetype=z80

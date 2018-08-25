@@ -1,5 +1,5 @@
 " Vim filetype plugin
-" Language: Zilog Z80 Assembly
+" Language: Zilog Z80 Module Assembler
 "
 
 setlocal ignorecase

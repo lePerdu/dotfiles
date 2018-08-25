@@ -1,10 +1,8 @@
 #!/bin/bash
 
-command_exists() {
-	command -v $1 > /dev/null 2>&1
-}
-
 cd $(dirname $0)
+
+local XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 local CP_CMD=
 
@@ -23,68 +21,56 @@ case $1 in
 		;;
 esac
 
-if command_exists tmux; then
-	if test -f $HOME/.tmux.conf; then
-		echo "Copying $HOME/.tmux.conf to $HOME/.tmux.conf.old"
-		mv $HOME/.tmux.conf $HOME/.tmux.conf.old
-	fi
+command_exists() {
+	command -v $1 > /dev/null 2>&1
+}
 
-	echo "Installing .tmux.conf"
-	$CP_CMD tmux.conf $HOME/.tmux.conf
-	$CP_CMD -r config/tmux $HOME/.config/tmux
+backup_files() {
+    if test -f "$1"; then
+        echo "Copying $1 to $1.old"
+        mv "$1" "$1.old"
+    fi
+}
+
+install_files() {
+    backup_files $2
+
+    echo "Installing $1 to $2"
+    mkdir -p $(dirname $2)
+    $CP_CMD "$1" "$2"
+}
+
+if command_exists tmux; then
+    install_files tmux.conf $HOME/.tmux.conf
+    install_files config/tmux $XDG_CONFIG_HOME/tmux
 fi
 
 if command_exists zsh; then
-	if test -f $HOME/.zshrc ; then
-		echo "Copying $HOME/.zshrc to $HOME/.zshrc.old"
-		mv $HOME/.zshrc $HOME/.zshrc.old
-	fi
-
-	if test -d $HOME/.oh-my-zsh; then
-		echo "Installing $HOME/.zshrc"
-		$CP_CMD zshrc $HOME/.zshrc
-		echo "Installing custom Oh-my-zsh plugins and themes to $HOME/.oh-my-zsh/custom"
-		$CP_CMD -r oh-my-zsh-custom/* $HOME/.oh-my-zsh/custom/
-	fi
+    install_files zshrc $HOME/.zshrc
+    install_files oh-my-zsh-custom/\* $HOME/.oh-my-zsh/custom
 fi
 
 if command_exists bash; then
-	if test -f $HOME/.bashrc; then
-		echo "Copying $HOME/.bashrc to $HOME/.bashrc.old"
-		mv $HOME/.bashrc $HOME/.bashrc.old
-	fi
+    install_files bashrc $HOME/.bashrc
+fi
 
-	echo "Installing $HOME/.bashrc"
-	$CP_CMD bashrc $HOME/.bashrc
+if command_exists fish; then
+    install_files config/fish $XDG_CONFIG_HOME/fish
+    install_files config/omf $XDG_CONFIG_HOME/omf
 fi
 
 if command_exists nvim; then
-	if test -d $HOME/.config/nvim; then
-		echo "Copying $HOME/.config/nvim to $HOME/.config/nvim.old"
-		rm -rf $HOME/.config/nvim.old
-		mv $HOME/.config/nvim $HOME/.config/nvim.old
-	fi
+    install_files config/nvim $XDG_CONFIG_HOME/nvim
 
-	echo "Installing $HOME/.config/nvim"
-	mkdir -p $HOME/.config # Just in case
-	$CP_CMD -r config/nvim $HOME/.config/nvim
+    backup_files $HOME/.nvimrc
+    echo "Linking $HOME/.nvimrc to $XDG_CONFIG_HOME/nvim/init.vim"
+    ln -sf $XDG_CONFIG_HOME/nvim/init.vim $HOME/.nvimrc
 
-	if test -f $HOME/.nvimrc; then
-		echo "Copying $HOME/.nvimrc to $HOME/.nvimrc.old"
-		mv $HOME/.nvimrc $HOME/.nvimrc.old
-	fi
-
-	echo "Linking $HOME/.nvimrc to $HOME/.config/nvim/init.vim"
-	ln -sf $HOME/.config/nvim/init.vim $HOME/.nvimrc
-
-	nvim -c ':PlugInstall' -c ':quit'
+    # Install dein plugins
+    nvim -c ':call dein#update()' -c ':quit'
 fi
 
-if test -f $HOME/.Xdefault; then
-	echo "Copying $HOME/.Xdefaults to $HOME/.Xdefaults.old"
-	mv $HOME/.Xdefaults $HOME/.Xdefaults.old
+if test -f $HOME/.Xdefaults; then
+    install_files Xdefaults $HOME/.Xdefaults
 fi
-
-echo "Installing $HOME/.Xdefaults"
-$CP_CMD Xdefaults $HOME/.Xdefaults
 

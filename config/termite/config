@@ -1,62 +1,120 @@
 [options]
+allow_bold = true
+#audible_bell = false
+clickable_url = true
+dynamic_title = true
+font = Knack Nerd Font 10
+# This is too small
+# font = DinaPowerline
+#fullscreen = true
+#geometry = 640x480
+icon_name = utilities-terminal
+mouse_autohide = true
 scroll_on_output = false
 scroll_on_keystroke = true
-audible_bell = false
-mouse_autohide = true
-allow_bold = true
-dynamic_title = true
-urgent_on_bell = true
-clickable_url = true
-font = Dina
-scrollback_lines = 0
+# Length of the scrollback buffer, 0 disabled the scrollback buffer
+# and setting it to a negative value means "infinite scrollback"
+scrollback_lines = -1
 search_wrap = true
-#icon_name = terminal
-#geometry = 640x480
+#urgent_on_bell = true
+
+# $BROWSER is used by default if set, with xdg-open as a fallback
+browser = xdg-open
 
 # "system", "on" or "off"
 cursor_blink = on
 
 # "block", "underline" or "ibeam"
-cursor_shape = ibeam
-
-# $BROWSER is used by default if set, with xdg-open as a fallback
-#browser = xdg-open
-
-# set size hints for the window
-#size_hints = false
+cursor_shape = block
 
 # Hide links that are no longer valid in url select overlay mode
 filter_unmatched_urls = true
 
-# emit escape sequences for extra modified keys
+# Emit escape sequences for extra modified keys
 #modify_other_keys = false
 
+# set size hints for the window
+#size_hints = false
+
 [colors]
-# Pulled from onedark.vim
-foreground = #abb2bf
-background = rgba(40, 44, 52, 0.9)
-
-# if unset, will reverse foreground and background
-highlight = #3e4452
+# Onedark
 cursor = #61afef
-cursor_foreground = #282c34
+# cursor_foreground = #dcdccc
 
-color0  = #282c34
-color1  = #e06c75
-color2  = #98c379
-color3  = #e5c07b
-color4  = #61afef
-color5  = #c678dd
-color6  = #56b6c2
-color7  = #abb2bf
-color8  = #3e4452
-color9  = #be5046
+foreground = #abb2bf
+# Use this format for transparency
+background = rgba(40, 44, 52, 0.90)
+# If unset, will reverse foreground and background
+highlight = #3e4452
+# Colors from color0 to color254 can be set
+color0 = #282c34
+color1 = #e06c75
+color2 = #98c379
+color3 = #e5c07b
+color4 = #02606D
+color5 = #c678dd
+color6 = #56b6c2
+color7 = #abb2bf
+color8 = #3e4452
+color9 = #be5046
 color10 = #98c379
 color11 = #d19a66
 color12 = #61afef
 color13 = #c678dd
 color14 = #56b6c2
 color15 = #5c6370
+
+# materialshell
+# cursor = #61afef
+# foreground = #A1B0B8
+# background = #151515
+# highlight = #3e4452
+
+# color0  = #252525
+# color1  = #FF5252
+# color2  = #C3D82C
+# color3  = #FFC135
+# color4  = #42A5F5
+# color5  = #D81B60
+# color6  = #00ACC1
+# color7  = #F5F5F5
+# color8  = #708284
+# color9  = #FF5252
+# color10 = #C3D82C
+# color11 = #FFC135
+# color12 = #42A5F5
+# color13 = #D81B60
+# color14 = #00ACC1
+# color15 = #F5F5F5
+
+# Multicolor (Awesome WM theme)
+# cursor = #ff8c00
+# # cursor_foreground = #dcdccc
+# foreground = #aaaaaa
+# background = #000000
+# background = rgba(5, 5, 5, 0.90)
+# highlight = #1a1e20
+
+# color0  = #050505
+# color1  = #e33a6e
+# color2  = #2c5123
+# color3  = #f1af5f
+# color4  = #7788af
+# color6  = #3ca4d8
+# color7  = #cccccc
+# color8  = #606060
+# color9  = #e54c62
+# color11 = #e0da37
+# color12 = #7493d2
+# color13 = #eca4c4
+# color14 = #80d9d8
+# color15 = #b2b2b2
+
+# # Purple and light green
+# color5  = #5b2855
+# color10 = #87af5f
+
+# # Dark orange: #de5e1e
 
 [hints]
 #font = Monospace 12

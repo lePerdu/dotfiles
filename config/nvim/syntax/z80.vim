@@ -12,7 +12,7 @@ set cpo&vim
 
 syn case ignore
 
-syn keyword z80Register a b c d e f h l i r ixh ixl
+syn keyword z80Register a b c d e f h l i r ixh ixl iyh iyl
 syn keyword z80Register af bc de hl ix iy sp
 
 " Decimal
@@ -24,15 +24,15 @@ syn match z80Number /\v\w@<![+\-]?\$[0-9a-f]+\w@!/
 
 " Binary
 syn match z80Number /\v\w@<![01]+b\w@!/
-syn match z80Number /\w\w@<!\%[01]+\w@!/
+syn match z80Number /\v\w@<!\%[01]+\w@!/
 
-syn match z80RelativeAddr /\v\$[+\-][0-9a-f]+/ contained
+syn match z80RelativeAddr /\v\$[+-][0-9a-f]+/
 " Relative address after a comma and optional whitespace (not
 " highlighted)
 syn match z80RelAddrArg /,/ skipwhite contained nextgroup=z80RelativeAddr
 
-syn keyword z80JRFlags z c nz nc contained skipwhite nextgroup=z80RelAddrArg
-syn keyword z80AllFlags z c o v nz nc no nv contained
+syn keyword z80JRFlags z nz c nc contained skipwhite nextgroup=z80RelAddrArg
+syn keyword z80AllFlags z nz c nc po pe p m contained
 
 syn keyword z80Jump jr skipwhite nextgroup=z80JRFlags,z80RelativeAddr
 syn keyword z80Jump jp call ret reti retn skipwhite nextgroup=z80AllFlags
@@ -44,13 +44,15 @@ syn keyword z80Mnemonic rl rla rlc rlca rld rr rra rrc rrca rrd sla sra srl
 syn keyword z80Mnemonic djnz nop rst
 syn keyword z80Mnemonic di ei halt im in ind indr ini otdr otir out outd outi
 
-syn keyword z80Todo TODO contained
+syn keyword z80Todo TODO FIXME XXX contained
 
 syn match z80Comment /;.*$/ contains=z80Todo
-syn region z80String start=/"/ skip=/\\"/ end=/"/ oneline
+syn region z80String start=/"/ skip=/\([^\\]\(\\\\\)*\)\@<=\\"/ end=/"/ oneline
+syn region z80String start='<' end='>' oneline contained
 syn match z80Character /'.'/
+syn match z80Character /'\\[nrt\\'#]'/
 
-syn match z80Include '^\s*#include'
+syn match z80Include '^\s*#include.*' contains=z80String
 syn match z80Define '^\s*#define'
 syn match z80Define '^\s*#undefine'
 syn match z80Macro '^\s*#macro'
@@ -59,6 +61,7 @@ syn match z80CondPreProc '^\s*#if'
 syn match z80CondPreProc '^\s*#ifdef'
 syn match z80CondPreProc '^\s*#ifndef'
 syn match z80CondPreProc '^\s*#else'
+syn match z80CondPreProc '^\s*#elif'
 syn match z80CondPreProc '^\s*#endif'
 
 syn match z80Directive '\v\.[a-z]+'
@@ -66,9 +69,9 @@ syn match z80Directive '\v\.[a-z]+'
 "syn keyword z80Directive .fill .block .addinstr .echo .error  .assume
 "syn keyword z80Directive .list .nolist .show .option .seek
 
-syn match z80Label /\v^[a-z_][a-z0-9_]*(:)@=/
+syn match z80Label /\v^[a-z_$][a-z0-9_]*(:)@=/
+syn match z80Label /\v^(\+|-)+_(:)@=/
 
-" The default methods for highlighting.  Can be overridden later
 hi def link z80Label        Statement
 hi def link z80Comment    	Comment
 hi def link z80Todo    		Todo
