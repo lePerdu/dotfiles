@@ -338,7 +338,7 @@ autocmd BufWritePre * call <SID>UpdateLastModified()
 
 " Plugins {{{
 
-set runtimepath+=/home/zach/.config/nvim/dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=/home/zach/.config/nvim/dein/dein.vim
 
 let g:dein#install_log_filename = "~/.config/nvim/dein/install.log"
 
@@ -348,7 +348,7 @@ if dein#load_state('/home/zach/.config/nvim/dein')
 
     " Let dein manage dein
     " Required:
-    call dein#add('/home/zach/.config/nvim/dein/repos/github.com/Shougo/dein.vim')
+    call dein#add('/home/zach/.config/nvim/dein/dein.vim')
 
     call dein#add('~/workspace/multicolor.vim')
 
