@@ -350,8 +350,6 @@ if dein#load_state('/home/zach/.config/nvim/dein')
     " Required:
     call dein#add('/home/zach/.config/nvim/dein/dein.vim')
 
-    call dein#add('~/workspace/multicolor.vim')
-
     call dein#add('joshdick/onedark.vim')
     " call dein#add('edkolev/tmuxline.vim')
     " call dein#add('kovisoft/slimv')
@@ -400,7 +398,6 @@ if dein#load_state('/home/zach/.config/nvim/dein')
     call dein#add('vim-airline/vim-airline')
     call dein#add('vim-airline/vim-airline-themes')
 
-    call dein#add('~/workspace/idris-vim')
 
     " Required:
     call dein#end()
@@ -654,10 +651,6 @@ vmap =p "_dp
 vmap =P "_dP
 " TODO Make indent-on-paste default (vim-unimpaired's method doesn't work for
 " non-linewise pastes so it will probably need to be changed)
-" }}}
-
-" idris-vim {{{
-let g:idris_fold_comments = 0
 " }}}
 
 " vim-javascript / vim-jsx {{{
