@@ -2,42 +2,43 @@
 
 cd $(dirname $0)
 
-local XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
-local CP_CMD=
+CP_CMD=
 
 case $1 in
-	link|ln|)
-		$CP_CMD=ln
-		;;
+    link|ln|"")
+        CP_CMD="ln -sf"
+        ;;
 
-	copy|cp)
-		$CP_CMD="cp -r"
-		;;
+    copy|cp)
+        CP_CMD="cp -r"
+        ;;
 
-	*)
-		echo "usage: ./install.sh [copy|cp|link|ln]"
-		exit 1
-		;;
+    *)
+        echo "usage: ./install.sh [copy|cp|link|ln]"
+        exit 1
+        ;;
 esac
 
 command_exists() {
-	command -v $1 > /dev/null 2>&1
+    command -v $1 > /dev/null 2>&1
 }
 
 backup_files() {
+	return
     if test -f "$1"; then
-        echo "Copying $1 to $1.old"
-        mv "$1" "$1.old"
+        echo "Copying $1 to $1~"
+        mv "$1" "$1~"
     fi
 }
 
 install_files() {
     backup_files $2
 
-    echo "Installing $1 to $2"
+    echo "Installing $PWD/$1 to $2"
     mkdir -p $(dirname $2)
-    $CP_CMD "$1" "$2"
+    $CP_CMD "$PWD/$1" "$2"
 }
 
 if command_exists tmux; then
