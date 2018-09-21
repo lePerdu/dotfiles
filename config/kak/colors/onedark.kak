@@ -48,7 +48,7 @@ evaluate-commands %sh{
 		face global list yellow
 
 		# builtin faces
-		face global Default default,default
+		face global Default default,$black
 		face global PrimarySelection default,$visual_gray
 		face global SecondarySelection $white,$visual_gray
 		face global PrimaryCursor $black,$blue
@@ -68,8 +68,11 @@ evaluate-commands %sh{
 		face global StatusLineValue green,default
 		face global StatusCursor black,cyan
 		face global Prompt $green,default
-		face global MatchingChar default,default+b
+		face global MatchingChar $blue,default+b
 		face global BufferPadding $special_gray,default
+
+		face global Search default,$dark_yellow
+		face global AutowrapColumn $red,$cursor_gray
 	"
 }
 

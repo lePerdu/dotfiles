@@ -1,36 +1,54 @@
 # Kakoune user configuration
 #
 
-set current autowrap_column 80
+set-option current autowrap_column 80
+
 hook global WinCreate .* %{
-    addhl window wrap
-    addhl global number_lines
     autowrap-enable
 }
 
-set current tabstop 4
-set current indentwidth 0
+add-highlighter global/ wrap -word -indent
+add-highlighter global/ show-matching
+add-highlighter global/ number-lines
+add-highlighter global/ column '%opt{autowrap_column}' AutowrapColumn
+
+set-option current tabstop 4
+set-option current indentwidth 4
 
 # Use system clipboard
-
 hook global NormalKey y|d|c %{ nop %sh{
-    printf %s "$kak_reg_dquote" | xsel -ib
+    echo $kak_reg_dquote | xsel -ib
 }}
 
 map global user p '<a-!>xsel -ob<ret>'
 map global user P '!xsel -ob<ret>'
 
-# Hack to get backspace to delete indentwidth's word of spaces
-map global insert <backspace> ⌫
-hook global InsertChar ⌫ %{ try %{
-    execute-keys <backspace>
-    try %{
-        execute-keys -draft hGh <a-k>\A +\z<ret> <lt>
-    } catch %{
-        execute-keys <backspace>
-    }
+# Non-shifted <a-j> moves the cursor to the joining point and shiften <a-J>
+# moves the cursor
+map global normal <a-j> <a-J>
+map global normal <a-J> <a-j>
+
+hook global InsertChar \t %{ try %{
+    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
 }}
 
+hook global InsertDelete ' ' %{ try %{
+     execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
+}}
+
+# Highlight matching searches
+# TODO If a register-change hook comes, use it instead
+hook global NormalKey [/*] %{
+    # try block so we don't have to worry about adding it multiple times
+    try %{
+        add-highlighter global/hlsearch dynregex '%reg{/}' 0:Search
+    }
+}
+
+# Remove search highlighting
+map global normal <s-tab> ':remove-highlighter global/hlsearch<ret>'
+
+# Use <tab> and <s-tab> during completion
 hook global InsertCompletionShow .* %{
     try %{
         # this command temporarily removes cursors preceded by whitespace;
@@ -43,16 +61,64 @@ hook global InsertCompletionShow .* %{
     }
 }
 
+# Remove the mappings when the popup menu is closed
 hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
 
-hook global BufCreate .* %{editorconfig-load}
+hook global BufCreate .* %{ editorconfig-load }
 
 # The default filetype detection only includes *.tex
 hook global BufCreate .*\.latex %{
-    set buffer filetype latex
+    set-option buffer filetype latex
+}
+
+# TODO Move this
+hook global BufCreate .*\.rs %{
+    set-option buffer makecmd "cargo build"
+}
+
+# Setup IDE-ish mode
+rename-client main
+set-option global jumpclient main
+set-option global docsclient main
+set-option global toolsclient tools
+
+hook global BufCreate \*grep\* %{
+    evaluate-commands %sh{
+        if test -z %opt{toolsclient}; then
+            echo "set-option global toolsclient tools"
+            echo "tilix-new-vertical rename-client tools"
+            echo "tilix-focus tools"
+        fi
+    }
+}
+
+# Plugins
+source "%val{config}/plugins/kakoune-plug/plug.kak"
+
+plug "https://github.com/lenormf/kakoune-extra"
+plug "https://github.com/ul/kak-lsp" "n/a"
+plug "https://github.com/alexherbo2/auto-pairs.kak"
+plug "https://github.com/occivink/kakoune-sudo-write"
+plug "https://github.com/h-youhei/kakoune-surround"
+
+hook global WinCreate .* %{
+    auto-pairs-enable
+}
+
+declare-user-mode surround
+# I don't use view mode that much and view lock mode is more useful anyway
+map global normal v ':enter-user-mode surround<ret>'
+map global surround s ':surround<ret>' -docstring 'surround'
+map global surround c ':change-surround<ret>' -docstring 'change'
+map global surround d ':delete-surround<ret>' -docstring 'delete'
+map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+
+eval %sh{
+    $kak_config/plugins/kak-lsp/target/release/kak-lsp \
+        --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
 }
 
 colorscheme onedark

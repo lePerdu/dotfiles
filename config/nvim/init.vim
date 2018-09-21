@@ -351,53 +351,65 @@ if dein#load_state('/home/zach/.config/nvim/dein')
     call dein#add('/home/zach/.config/nvim/dein/dein.vim')
 
     call dein#add('joshdick/onedark.vim')
+    call dein#add('~/workspace/tango.vim')
+
     " call dein#add('edkolev/tmuxline.vim')
     " call dein#add('kovisoft/slimv')
     " call dein#add('l04m33/vlime')
     " call dein#add('neomake/neomake')
-    call dein#add('rust-lang/rust.vim')
+    " call dein#add('Yggdroot/indentLine')
+
+    " Completion plugins
     call dein#add('Shougo/deoplete.nvim', {
                 \ 'hook_post_update': 'call dein#remote_plugins()'
                 \ })
-    " call dein#add('Yggdroot/indentLine')
-    " call dein#add('ctrlpvim/ctrlp.vim')
+    " call dein#add('autozimu/LanguageClient-neovim', {
+    "             \ 'rev': 'next',
+    "             \ 'build': 'bash install.sh',
+    "             \ })
+    " call dein#add('w0rp/ale')
+    " call dein#add('ludovicchabant/vim-gutentags')
+
+    " Search plugins
     call dein#add('junegunn/fzf', {
                 \ 'build': './install --bin'
                 \ })
     call dein#add('junegunn/fzf.vim')
-    call dein#add('donRaphaco/neotex', {
-                \ 'on_ft': 'tex',
-                \ })
+    " call dein#add('ctrlpvim/ctrlp.vim')
+
+    " Language plugins
+    call dein#add('lervag/vimtex', { 'on_ft': 'tex' })
+    call dein#add('donRaphaco/neotex', { 'on_ft': 'tex' })
+    call dein#add('rust-lang/rust.vim', { 'on_ft': 'rust' })
+    call dein#add('dag/vim-fish')
+    call dein#add('pangloss/vim-javascript')
+    call dein#add('mxw/vim-jsx')
+
+    " Initialization plugins
     call dein#add('sgur/vim-editorconfig')
     call dein#add('embear/vim-localvimrc')
-    call dein#add('lilydjwg/colorizer')
-    call dein#add('jiangmiao/auto-pairs')
-    call dein#add('lervag/vimtex')
     call dein#add('noahfrederick/vim-skeleton')
-    call dein#add('romainl/vim-qf')
-    call dein#add('ryanoasis/vim-devicons')
+
+    " Editing efficiency plugins
     call dein#add('tpope/vim-abolish')
     call dein#add('tpope/vim-commentary')
     call dein#add('tpope/vim-fugitive')
     call dein#add('tpope/vim-repeat')
     call dein#add('tpope/vim-surround')
     call dein#add('tpope/vim-unimpaired')
-    " call dein#add('w0rp/ale')
-    " call dein#add('ludovicchabant/vim-gutentags')
-    call dein#add('Shougo/echodoc.vim')
-    " call dein#add('justinmk/vim-dirvish')
-    call dein#add('dag/vim-fish')
-    call dein#add('pangloss/vim-javascript')
-    call dein#add('mxw/vim-jsx')
-    call dein#add('autozimu/LanguageClient-neovim', {
-                \ 'rev': 'next',
-                \ 'build': 'bash install.sh',
-                \ })
+    call dein#add('jiangmiao/auto-pairs')
+    call dein#add('romainl/vim-qf')
+    call dein#add('lilydjwg/colorizer')
+
+    " Directory viewing plugins
     call dein#add('scrooloose/nerdtree')
     call dein#add('Xuyuanp/nerdtree-git-plugin')
+    " call dein#add('justinmk/vim-dirvish')
+
+    " Appearance plugins
     call dein#add('vim-airline/vim-airline')
     call dein#add('vim-airline/vim-airline-themes')
-
+    call dein#add('ryanoasis/vim-devicons')
 
     " Required:
     call dein#end()
@@ -428,6 +440,21 @@ endif
 
 " }}}
 
+" Tango {{{
+
+if $TERM =~ '.*256color' || &termguicolors
+    let g:tango_termcolors = 256
+    let g:tango_terminal_italics = 1
+    " let g:tango_disable_background = 1
+else
+    let g:tango_termcolors = 16
+    let g:tango_terminal_italics = 0
+endif
+
+colorscheme tango
+
+" }}}
+
 " Onedark {{{
 
 if $TERM =~ '.*256color' || &termguicolors
@@ -438,7 +465,7 @@ else
     let g:onedark_terminal_italics = 0
 endif
 
-colorscheme onedark
+" colorscheme onedark
 
 " }}}
 
@@ -651,6 +678,10 @@ vmap =p "_dp
 vmap =P "_dP
 " TODO Make indent-on-paste default (vim-unimpaired's method doesn't work for
 " non-linewise pastes so it will probably need to be changed)
+" }}}
+
+" colorizer {{{
+let g:colorizer_startup = 0
 " }}}
 
 " vim-javascript / vim-jsx {{{

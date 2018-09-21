@@ -1,3 +1,6 @@
 [submodule "config/nvim/dein/dein.vim"]
 	path = config/nvim/dein/dein.vim
 	url = https://github.com/Shougo/dein.vim
+[submodule "config/kak/plugins/kakoune-plug"]
+	path = config/kak/plugins/kakoune-plug
+	url = https://github.com/TeddyDD/kakoune-plug

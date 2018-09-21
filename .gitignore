@@ -10,5 +10,8 @@ config/nvim/dein/install.log
 config/nvim/dein/state_nvim.vim
 
 config/fish/conf.d/omf.fish
-config/fish/fishd.localhost.localdomain
+config/fish/fishd.*
+
+config/kak/plugins
+config/kak/autoload/system
 
