@@ -74,10 +74,19 @@ hook global BufCreate .*\.latex %{
     set-option buffer filetype latex
 }
 
-# TODO Move this
-hook global BufCreate .*\.rs %{
-    set-option buffer makecmd "cargo build"
+define-command -hidden try-comment-line %{
+    try %{
+        comment-line
+    } catch %{
+        execute-keys "<a-x><a-s>_"
+        comment-block
+    }
 }
+
+# Mappings for (un)commenting code
+# Each style falls backs to the other if it is not defined
+map global user c ':try comment-line catch try-comment-line<ret>'
+map global user C ':try comment-block catch comment-line<ret>'
 
 # Setup IDE-ish mode
 rename-client main
@@ -98,6 +107,8 @@ hook global BufCreate \*grep\* %{
 # Plugins
 source "%val{config}/plugins/kakoune-plug/plug.kak"
 
+# TODO Can plug manage itself without sourcing twice?
+#plug "https://github.com/TeddyDD/kakoune-plug"
 plug "https://github.com/lenormf/kakoune-extra"
 plug "https://github.com/ul/kak-lsp" "n/a"
 plug "https://github.com/alexherbo2/auto-pairs.kak"
@@ -116,10 +127,13 @@ map global surround c ':change-surround<ret>' -docstring 'change'
 map global surround d ':delete-surround<ret>' -docstring 'delete'
 map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
 
-eval %sh{
-    $kak_config/plugins/kak-lsp/target/release/kak-lsp \
+evaluate-commands %sh{
+    $kak_config/plugins/github.com/ul/kak-lsp/target/release/kak-lsp \
         --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
 }
+
+# Show hover information
+map global user h ':lsp-hover<ret>'
 
 colorscheme onedark
 
