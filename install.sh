@@ -4,29 +4,16 @@ cd $(dirname $0)
 
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
-CP_CMD=
+cp_cmd="ln -sf"
 
-case $1 in
-    link|ln|"")
-        CP_CMD="ln -sf"
-        ;;
-
-    copy|cp)
-        CP_CMD="cp -r"
-        ;;
-
-    *)
-        echo "usage: ./install.sh [copy|cp|link|ln]"
-        exit 1
-        ;;
-esac
+all_configs="zsh fish bash nvim kak vis tmux Xdefaults tilix"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
 }
 
 backup_files() {
-	return
+    return
     if test -f "$1"; then
         echo "Copying $1 to $1~"
         mv "$1" "$1~"
@@ -38,51 +25,77 @@ install_files() {
 
     echo "Installing $PWD/$1 to $2"
     mkdir -p $(dirname $2)
-    $CP_CMD "$PWD/$1" "$2"
+    $cp_cmd "$PWD/$1" "$2"
 }
 
-if command_exists tmux; then
-    install_files tmux.conf $HOME/.tmux.conf
-    install_files config/tmux $XDG_CONFIG_HOME/tmux
+while getopts lc opt; do
+    case $opt in
+        l) cp_cmd="ln -sf" ;;
+        c) cp_cmd="cp -r" ;;
+        ?) echo "usage: $0 [-lc] <configs...>"
+           echo "  available configs:" $all_configs
+           exit 2
+           ;;
+    esac
+done
+
+shift $(( $OPTIND - 1 ))
+
+configs="$*"
+if test -z "$configs"; then
+    configs="$all_configs"
 fi
 
-if command_exists zsh; then
-    install_files zshrc $HOME/.zshrc
-    install_files oh-my-zsh-custom/\* $HOME/.oh-my-zsh/custom
-fi
+for config in $configs; do
+    case $config in
+        tmux)
+            install_files tmux.conf $HOME/.tmux.conf
+            install_files config/tmux $XDG_CONFIG_HOME/tmux
+            ;;
 
-if command_exists bash; then
-    install_files bashrc $HOME/.bashrc
-fi
+        zsh)
+            install_files zshrc $HOME/.zshrc
+            install_files oh-my-zsh-custom/\* $HOME/.oh-my-zsh/custom
+            ;;
 
-if command_exists fish; then
-    install_files config/fish $XDG_CONFIG_HOME/fish
-    install_files config/omf $XDG_CONFIG_HOME/omf
-fi
+        bash)
+            install_files bashrc $HOME/.bashrc
+            ;;
 
-if command_exists nvim; then
-    install_files config/nvim $XDG_CONFIG_HOME/nvim
+        fish)
+            install_files config/fish $XDG_CONFIG_HOME/fish
+            install_files config/omf $XDG_CONFIG_HOME/omf
+            ;;
 
-    backup_files $HOME/.nvimrc
-    echo "Linking $HOME/.nvimrc to $XDG_CONFIG_HOME/nvim/init.vim"
-    ln -sf $XDG_CONFIG_HOME/nvim/init.vim $HOME/.nvimrc
+        nvim)
+            install_files config/nvim $XDG_CONFIG_HOME/nvim
 
-    # Install dein plugins
-    nvim -c ':call dein#update()' -c ':quit'
-fi
+            backup_files $HOME/.nvimrc
+            echo "Linking $HOME/.nvimrc to $XDG_CONFIG_HOME/nvim/init.vim"
+            ln -sf $XDG_CONFIG_HOME/nvim/init.vim $HOME/.nvimrc
 
-if command_exists kak; then
-    install_files config/kak $XDG_CONFIG_HOME/kak
-    # Link system autoload files
-    ln -sf $(which kak)/../share/kak/autoload \
-        $XDG_CONFIG_HOME/kak/autoload/syst em
-fi
+            # Install dein plugins
+            nvim -c ':call dein#update()' -c ':quit'
+            ;;
 
-if command_exists vis; then
-    install_files config/vis $XDG_CONFIG_HOME/vis
-fi
+        kak)
+            install_files config/kak $XDG_CONFIG_HOME/kak
+            # Link system autoload files
+            ln -sf $(which kak)/../share/kak/autoload \
+                $XDG_CONFIG_HOME/kak/autoload/system
+            ;;
 
-if test -f $HOME/.Xdefaults; then
-    install_files Xdefaults $HOME/.Xdefaults
-fi
+        vis)
+            install_files config/vis $XDG_CONFIG_HOME/vis
+            ;;
+
+        tilix)
+            install_files config/tilix $XDG_CONFIG_HOME/tilix
+            ;;
+
+        Xdefaults)
+            install_files Xdefaults $HOME/.Xdefaults
+            ;;
+
+done
 

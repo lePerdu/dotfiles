@@ -1,0 +1,36 @@
+{
+    "child": {
+        "child1": {
+            "directory": "\/home\/zach",
+            "height": 762,
+            "profile": "6c1b6382-cbc9-4ae6-9321-2310c1cc6ccb",
+            "readOnly": false,
+            "synchronizedInput": true,
+            "type": "Terminal",
+            "uuid": "df944526-b439-4af8-9824-cd727c053934",
+            "width": 1920
+        },
+        "child2": {
+            "directory": "",
+            "height": 246,
+            "overrideCommand": "env TMPDIR='' kak -c kaffeinic-kitten ",
+            "profile": "6c1b6382-cbc9-4ae6-9321-2310c1cc6ccb",
+            "readOnly": false,
+            "synchronizedInput": true,
+            "type": "Terminal",
+            "uuid": "5ac12d32-f758-4e11-9855-b06eaf0e72d8",
+            "width": 1920
+        },
+        "orientation": 1,
+        "position": 75,
+        "ratio": 0.755203171456887978,
+        "type": "Paned"
+    },
+    "height": 1009,
+    "name": "Default",
+    "synchronizedInput": false,
+    "type": "Session",
+    "uuid": "c455daf7-4f0d-47d7-9e1e-abf8e6509049",
+    "version": "1.0",
+    "width": 1920
+}
