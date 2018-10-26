@@ -14,8 +14,7 @@ command = "rls"
 [language.javascript]
 extensions = ["js", "jsx"]
 roots = ["package.json"]
-command = "javascript-typescript-langserver"
-args = ["--stdio"]
+command = "javascript-typescript-stdio"
 
 [language.json]
 extensions = ["json"]
@@ -75,3 +74,4 @@ extensions = ["sh", "bash", "zsh"]
 roots = [".git", ".hg"]
 command = "bash-language-server"
 args = ["start"]
+

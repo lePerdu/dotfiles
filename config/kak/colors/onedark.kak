@@ -75,9 +75,9 @@ evaluate-commands %sh{
 		face global MenuForeground $blue,$menu
 		face global MenuBackground $foreground,$menu
 		face global MenuInfo $cyan
-		face global Information $fg_dark,$cyan
+		face global Information $cursor,$menu
 		face global Error $black,$red
-		face global StatusLine $blue,$menu
+		face global StatusLine $blue,$background
 		face global StatusLineMode $yellow,default
 		face global StatusLineInfo $blue,default
 		face global StatusLineValue $green,default
@@ -87,6 +87,9 @@ evaluate-commands %sh{
 		face global BufferPadding $white_bright,$background
 
 		face global Search default,$search
+		face global PrimarySelectionSearch default,$visual
+		face global PrimarySelectionDefault default,$visual
+
 		face global AutowrapColumn $red,$guide
 	"
 }

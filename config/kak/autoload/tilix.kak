@@ -4,6 +4,7 @@ hook global KakBegin .* %{
     evaluate-commands %sh{
         if [ -n "$TILIX_ID" ]; then
             echo "alias global new tilix-new-horizontal"
+            echo "alias global vnew tilix-new-vertical"
             echo "alias global focus tilix-focus"
         fi
     }
@@ -36,7 +37,7 @@ define-command tilix-new-vertical -params .. -command-completion \
     tilix-new-impl 'session-add-down' %arg{@}
 }
 
-define-command tilix-foxus -params 1 -docstring "" %{
+define-command tilix-focus -params 1 -docstring "" %{
     echo "Unimplemented"
 }
 
