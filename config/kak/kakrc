@@ -25,24 +25,18 @@ set-option global ui_options ncurses_assistant=none
 
 # Use system clipboard
 hook global NormalKey y|d|c %{ nop %sh{
-    echo $kak_reg_dquote | xsel -ib
+    echo "$kak_reg_dquote" | \
+        sed -e "s/^'//g" -e "s/\([^\\]\)'/\1/g" -e "s/\\\'/'/g" | \
+        xsel -ib
 }}
 
-map global user p '<a-!>xsel -ob<ret>'
-map global user P '!xsel -ob<ret>'
+map global normal p '<a-!>xsel -ob<ret>' -docstring 'Paste before'
+map global normal P '!xsel -ob<ret>' -docstring 'Paste after'
 
 # Non-shifted <a-j> moves the cursor to the joining point and shiften <a-J>
 # moves the cursor
 map global normal <a-j> <a-J>
 map global normal <a-J> <a-j>
-
-hook global InsertChar \t %{ try %{
-    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
-}}
-
-hook global InsertDelete ' ' %{ try %{
-     execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
-}}
 
 # Use <tab> and <s-tab> during completion
 hook global InsertCompletionShow .* %{
@@ -56,19 +50,25 @@ hook global InsertCompletionShow .* %{
         map window insert <s-tab> <c-p>
     }
 }
-
-# Remove the mappings when the popup menu is closed
 hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
 
-hook global BufCreate .* %{ editorconfig-load }
-
-# The default filetype detection only includes *.tex
-hook global BufCreate .*\.latex %{
-    set-option buffer filetype latex
+# Auto-expand tabs to spaces
+hook global InsertChar \t %{
+    execute-keys -draft ';h@'
 }
+hook global InsertDelete ' ' %{ try %{ execute-keys -draft %sh{
+    if test $kak_opt_indentwidth -le 1; then
+        exit
+    elif test $kak_opt_indentwidth -eq 2; then
+        echo ";h"
+    else       d
+        echo ";h$(( $kak_opt_indentwidth - 2 ))H"
+    fi
+    echo "<a-k>\A +\z<ret>d"
+}}}
 
 define-command -hidden try-comment-line %{
     try %{
@@ -81,24 +81,27 @@ define-command -hidden try-comment-line %{
 
 # Mappings for (un)commenting code
 # Each style falls backs to the other if it is not defined
-map global user c ':try comment-line catch try-comment-line<ret>'
-map global user C ':try comment-block catch comment-line<ret>'
+map global user c ':try comment-line catch try-comment-line<ret>' \
+    -docstring 'Comment line(s)' 
+map global user C ':try comment-block catch comment-line<ret>' \
+     -docstring 'Comment block'
 
 # Setup IDE-ish mode
-rename-client main
-set-option global jumpclient main
-set-option global docsclient main
-set-option global toolsclient tools
+# TODO Not working
+# rename-client main
+# set-option global jumpclient main
+# set-option global docsclient main
+# set-option global toolsclient tools
 
-hook global BufCreate \*grep\* %{
-    evaluate-commands %sh{
-        if test -z %opt{toolsclient}; then
-            echo "set-option global toolsclient tools"
-            echo "tilix-new-vertical rename-client tools"
-            echo "tilix-focus tools"
-        fi
-    }
-}
+# hook global BufCreate \*grep\* %{
+#     evaluate-commands %sh{
+#         if test -z %opt{toolsclient}; then
+#             echo "set-option global toolsclient tools"
+#             echo "tilix-new-vertical rename-client tools"
+#             echo "tilix-focus tools"
+#         fi
+#     }
+# }
 
 # Plugins
 source "%val{config}/plugins/kakoune-plug/plug.kak"
@@ -112,12 +115,28 @@ plug "https://github.com/Delapouite/kakoune-cd"
 plug "https://github.com/h-youhei/kakoune-surround"
 plug "https://github.com/lenormf/kakoune-extra"
 plug "https://github.com/occivink/kakoune-sudo-write"
-plug "https://github.com/rubberydub/nord-kakoune.git"
 plug "https://github.com/ul/kak-lsp" "n/a"
+plug "https://github.com/Delapouite/kakoune-auto-star"
+plug "https://github.com/Delapouite/kakoune-auto-percent"
+plug "https://github.com/alexherbo2/snippets.kak"
+plug "https://github.com/Delapouite/kakoune-palette"
+plug "https://github.com/alexherbo2/write-parent-directories.kak"
+# plug "https://github.com/alexherbo2/space-indent.kak"
+# plug "https://github.com/rubberydub/nord-kakoune.git"
+# colorscheme onedark
+colorscheme material
 
 hook global WinCreate .* %{
     auto-pairs-enable
-    search-highlighting-enable
+    search-highlighter-enable
+    write-parent-directories-enable
+    space-indent-enable
+}
+hook global BufCreate .* %{ editorconfig-load }
+
+# The default filetype detection only includes *.tex
+hook global BufCreate .*\.latex %{
+    set-option buffer filetype latex
 }
 
 set-option global auto_pairs '(' ')' '[' ']' '{' '}' '"' '"' '`' '`' "'"  "'"
@@ -135,8 +154,14 @@ evaluate-commands %sh{
         --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
 }
 
+# Debugging for kak-lsp
+# nop %sh{
+#     ($kak_config/plugins/github.com/ul/kak-lsp/target/release/kak-lsp \
+#         -s $kak_session -vvv) >/tmp/kak-lsp.log 2>&1 </dev/null &
+# }
+
 # Show hover information
-map global user h ':lsp-hover<ret>'
+map global user h ':lsp-hover<ret>' -docstring 'LSP hover'
 map global normal <a-,> ':enter-user-mode lsp<ret>'
 
 map global normal "'" ':move-line-below %val{count}<ret>'
