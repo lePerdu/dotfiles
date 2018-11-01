@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="zsh fish bash nvim kak vis tmux Xdefaults tilix"
+all_configs="zsh fish bash nvim kak vis tmux Xdefaults tilix termite"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -93,9 +93,17 @@ for config in $configs; do
             install_files config/tilix $XDG_CONFIG_HOME/tilix
             ;;
 
+        termite)
+            install_files config/termite $XDG_CONFIG_HOME/termite
+            ;;
+
         Xdefaults)
             install_files Xdefaults $HOME/.Xdefaults
             ;;
 
+        *)
+            echo "Unknown config: $config"
+            ;;
+    esac
 done
 
