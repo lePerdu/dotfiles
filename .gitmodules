@@ -4,3 +4,6 @@
 [submodule "config/kak/plugins/kakoune-plug"]
 	path = config/kak/plugins/kakoune-plug
 	url = https://github.com/TeddyDD/kakoune-plug
+[submodule "config/kak/plugins/plug.kak"]
+	path = config/kak/plugins/plug.kak
+	url = https://github.com/andreyorst/plug.kak

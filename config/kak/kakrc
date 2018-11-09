@@ -7,31 +7,46 @@ hook global WinCreate .* %{
     autowrap-enable
 }
 
-add-highlighter global/ wrap -word -indent
+add-highlighter global/ wrap -word -indent -marker '↳ '
 add-highlighter global/ show-matching
-add-highlighter global/ number-lines
+add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ column '%opt{autowrap_column}' AutowrapColumn
 
-set-option current tabstop 4
-set-option current indentwidth 4
-
-# Just set tabstop to set all tab-related options to the same thing
+# Set tabstop to set all tab-related options to the same thing
 hook global BufSetOption tabstop=.* %{
     set-option buffer indentwidth %opt{tabstop}
-    set-option buffer lsp_tab_size %opt{tabstop}
 }
+
+set-option current tabstop 4
 
 set-option global ui_options ncurses_assistant=none
 
-# Use system clipboard
+# Send the copied text to xsel, after unescaping it
+# TODO Figure out how to handle multiple selections. Only operate with the
+# first one? Have using the others be an option
+# TODO Put this in a plugin
 hook global NormalKey y|d|c %{ nop %sh{
-    echo "$kak_reg_dquote" | \
+    printf '%s' "$kak_reg_dquote" | \
         sed -e "s/^'//g" -e "s/\([^\\]\)'/\1/g" -e "s/\\\'/'/g" | \
         xsel -ib
 }}
 
-map global normal p '<a-!>xsel -ob<ret>' -docstring 'Paste before'
-map global normal P '!xsel -ob<ret>' -docstring 'Paste after'
+# Just using ! and <a-!> doesn't follow the same rules as p, P, R, etc., so
+# the " register is just updated from xsel before use.
+# TODO Figure out how to handle multiple selections
+define-command -hidden pull-xsel %{ evaluate-commands %sh{
+    printf "set-register dquote '"
+    xsel -ob | sed -e "s/'/''/g"
+    printf "'"
+}}
+
+map global normal p ': pull-xsel<ret>p'
+map global normal P ': pull-xsel<ret>P'
+map global normal R ': pull-xsel<ret>R'
+
+# map global normal p '<a-!>xsel -ob<ret>' -docstring 'Paste before'
+# map global normal P '!xsel -ob<ret>' -docstring 'Paste after'
+# map global normal R -docstring 'Replace text' R
 
 # Non-shifted <a-j> moves the cursor to the joining point and shiften <a-J>
 # moves the cursor
@@ -50,26 +65,33 @@ hook global InsertCompletionShow .* %{
         map window insert <s-tab> <c-p>
     }
 }
+
 hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>
     unmap window insert <s-tab> <c-p>
 }
 
 # Auto-expand tabs to spaces
+# TODO Put this in a plugin
 hook global InsertChar \t %{
     execute-keys -draft ';h@'
 }
+
 hook global InsertDelete ' ' %{ try %{ execute-keys -draft %sh{
+    # Move indentwidth - 2 to the left
     if test $kak_opt_indentwidth -le 1; then
         exit
     elif test $kak_opt_indentwidth -eq 2; then
+        # This has to be a separate case since 0h is the same as h, not nothing
         echo ";h"
-    else       d
+    else
         echo ";h$(( $kak_opt_indentwidth - 2 ))H"
     fi
     echo "<a-k>\A +\z<ret>d"
 }}}
 
+# Falling-back wrapper around comment-line
+# TODO Put this and try-comment-block into a plugin
 define-command -hidden try-comment-line %{
     try %{
         comment-line
@@ -81,9 +103,9 @@ define-command -hidden try-comment-line %{
 
 # Mappings for (un)commenting code
 # Each style falls backs to the other if it is not defined
-map global user c ':try comment-line catch try-comment-line<ret>' \
+map global user c ': try comment-line catch try-comment-line<ret>' \
     -docstring 'Comment line(s)' 
-map global user C ':try comment-block catch comment-line<ret>' \
+map global user C ': try comment-block catch comment-line<ret>' \
      -docstring 'Comment block'
 
 # Setup IDE-ish mode
@@ -103,67 +125,95 @@ map global user C ':try comment-block catch comment-line<ret>' \
 #     }
 # }
 
-# Plugins
-source "%val{config}/plugins/kakoune-plug/plug.kak"
-
-# TODO Can plug manage itself without sourcing twice?
-#plug "https://github.com/TeddyDD/kakoune-plug"
-plug "https://github.com/alexherbo2/auto-pairs.kak"
-plug "https://github.com/alexherbo2/move-line.kak"
-plug "https://github.com/alexherbo2/search-highlighting.kak"
-plug "https://github.com/Delapouite/kakoune-cd"
-plug "https://github.com/h-youhei/kakoune-surround"
-plug "https://github.com/lenormf/kakoune-extra"
-plug "https://github.com/occivink/kakoune-sudo-write"
-plug "https://github.com/ul/kak-lsp" "n/a"
-plug "https://github.com/Delapouite/kakoune-auto-star"
-plug "https://github.com/Delapouite/kakoune-auto-percent"
-plug "https://github.com/alexherbo2/snippets.kak"
-plug "https://github.com/Delapouite/kakoune-palette"
-plug "https://github.com/alexherbo2/write-parent-directories.kak"
-# plug "https://github.com/alexherbo2/space-indent.kak"
-# plug "https://github.com/rubberydub/nord-kakoune.git"
-# colorscheme onedark
-colorscheme material
-
-hook global WinCreate .* %{
-    auto-pairs-enable
-    search-highlighter-enable
-    write-parent-directories-enable
-    space-indent-enable
-}
-hook global BufCreate .* %{ editorconfig-load }
+# Load editorconfig
+hook global BufCreate [^*].* %{ editorconfig-load }
 
 # The default filetype detection only includes *.tex
 hook global BufCreate .*\.latex %{
     set-option buffer filetype latex
 }
 
-set-option global auto_pairs '(' ')' '[' ']' '{' '}' '"' '"' '`' '`' "'"  "'"
+# Plugins
 
-declare-user-mode surround
-# I don't use view mode that much and view lock mode is more useful anyway
-map global normal v ':enter-user-mode surround<ret>'
-map global surround s ':surround<ret>' -docstring 'surround'
-map global surround c ':change-surround<ret>' -docstring 'change'
-map global surround d ':delete-surround<ret>' -docstring 'delete'
-map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
 
-evaluate-commands %sh{
-    $kak_config/plugins/github.com/ul/kak-lsp/target/release/kak-lsp \
-        --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
+# Have plug.kak manage itself
+plug kakoune-git "andreyorst/plug.kak" noload
+
+# Editing helpres
+plug "alexherbo2/auto-pairs.kak" %{
+    set-option global auto_pairs ( ) [ ] { } ` ` '"' '"' "'" "'"
+    hook global WinCreate .* %{ auto-pairs-enable }
 }
 
-# Debugging for kak-lsp
-# nop %sh{
-#     ($kak_config/plugins/github.com/ul/kak-lsp/target/release/kak-lsp \
-#         -s $kak_session -vvv) >/tmp/kak-lsp.log 2>&1 </dev/null &
-# }
+plug "alexherbo2/move-line.kak" %{
+    map global normal "<a-'>" ': move-line-above %val{count}<ret>'
+    map global normal "'" ': move-line-below %val{count}<ret>'
+}
 
-# Show hover information
-map global user h ':lsp-hover<ret>' -docstring 'LSP hover'
-map global normal <a-,> ':enter-user-mode lsp<ret>'
+plug "alexherbo2/search-highlighting.kak" %{
+    hook global WinCreate .* %{ search-highlighter-enable }
+}
 
-map global normal "'" ':move-line-below %val{count}<ret>'
-map global normal "<a-'>" ':move-line-above %val{count}<ret>'
+plug "alexherbo2/snippets.kak"
+
+plug "Delapouite/kakoune-auto-star"
+plug "Delapouite/kakoune-auto-percent"
+
+plug "h-youhei/kakoune-surround" %{
+    declare-user-mode surround
+    # I don't use view mode that much and view lock mode is more useful anyway
+    map global normal v ': enter-user-mode surround<ret>'
+    map global surround s ': surround<ret>' -docstring 'surround'
+    map global surround c ': change-surround<ret>' -docstring 'change'
+    map global surround d ': delete-surround<ret>' -docstring 'delete'
+    map global surround t ': select-surrounding-tag<ret>' \
+        -docstring 'select tag'
+}
+
+# My implementation is better
+# TODO Submit PR to this
+# plug "https://github.com/alexherbo2/space-indent.kak"
+
+# Commands
+plug "alexherbo2/write-parent-directories.kak" %{
+    hook global WinCreate .* %{ write-parent-directories-enable }
+}
+plug "Delapouite/kakoune-cd"
+plug "occivink/kakoune-sudo-write"
+
+# Languages
+plug "ul/kak-lsp" noload do %{ rustup run stable cargo build --release } %{
+    evaluate-commands %sh{
+        $kak_config/plugins/kak-lsp/target/release/kak-lsp \
+            --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
+    }
+
+    # Debugging for kak-lsp
+    # nop %sh{
+    #     ($kak_config/plugins/kak-lsp/target/release/kak-lsp \
+    #         -s $kak_session -vvv) >/tmp/kak-lsp.log 2>&1 </dev/null &
+    # }
+
+    hook global BufSetOption tabstop=.* %{
+        set-option buffer lsp_tab_size %opt{tabstop}
+    }
+
+    # Show hover information
+    map global user h ': lsp-hover<ret>' -docstring 'LSP hover'
+    map global normal <a-,> ': enter-user-mode lsp<ret>'
+}
+
+# Other
+plug "lenormf/kakoune-extra"
+plug "Delapouite/kakoune-palette"
+plug "alexherbo2/edit-directory.kak" %{
+    hook global WinCreate .* %{ edit-directory-enable }
+}
+plug "https://gitlab.com/Screwtapello/kakoune-state-save"
+
+# Colorschemes
+# plug "https://github.com/rubberydub/nord-kakoune.git"
+# colorscheme onedark
+colorscheme material
 
