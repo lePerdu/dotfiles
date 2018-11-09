@@ -60,19 +60,19 @@ evaluate-commands %sh{
 
         # builtin faces
         face global Default $foreground,$background
-        face global PrimarySelection default,$selection
-        face global SecondarySelection default,$selection+d
-        face global PrimaryCursor $black,$cursor
-        face global SecondaryCursor $black,$white
-        face global PrimaryCursorEol $black,$blue
-        face global SecondaryCursorEol $black,$gray
+        face global PrimarySelection default,$selection+g
+        face global SecondarySelection default,$selection+dga
+        face global PrimaryCursor $black,$cursor+fg
+        face global SecondaryCursor $black,$white+fg
+        face global PrimaryCursorEol $black,$blue+fg
+        face global SecondaryCursorEol $black,$gray+fg
         face global LineNumbers $gutter_fg,$gutter_bg
-        face global LineNumberCursor $foreground+b
-        face global LineNumbersWrapped $red+di
+        face global LineNumberCursor $foreground,$gutter_bg+b
+        face global LineNumbersWrapped $red,$gutter_bg+i
         face global MenuForeground $primary,$black
         face global MenuBackground $foreground,$black
         face global MenuInfo $secondary,$black
-        face global Information $primary
+        face global Information $primary,$black
         face global Error $black,$red+b
         face global StatusLine $white,$black
         face global StatusLineMode $secondary
@@ -80,13 +80,14 @@ evaluate-commands %sh{
         face global StatusLineValue $primary
         face global StatusCursor $black,$cursor
         face global Prompt $foreground,default
-        face global MatchingChar $cyan+b
+        face global MatchingChar $cyan+bf
         face global BufferPadding $red
+        face global Whitespace default,default+d
 
         # For search-highlight
-        face global Search default,$search+d
-        face global PrimarySelectionSearch default,$selection+d
-        face global PrimarySelectionDefault default,$selection
+        face global Search default,$search+g
+        face global PrimarySelectionSearch default,$selected+g
+        face global PrimarySelectionDefault default,$selection+g
 
         face global AutowrapColumn $red,$wrap_guide
     "
