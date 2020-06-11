@@ -3,9 +3,8 @@ allow_bold = true
 #audible_bell = false
 clickable_url = true
 dynamic_title = true
-font = Knack Nerd Font 10
+font = Fira Code
 # This is too small
-# font = DinaPowerline
 #fullscreen = true
 #geometry = 640x480
 icon_name = utilities-terminal
@@ -37,6 +36,33 @@ filter_unmatched_urls = true
 #size_hints = false
 
 [colors]
+# Material
+# cursor = #00ACC1
+# cursor_foreground = #252525
+#
+# foreground = #abb0b8
+# # background = #263238
+# background = rgba(38, 50, 56, 0.90)
+#
+# highlight = #3a4d56
+#
+# color0  = #252525
+# color1  = #FF5252
+# color2  = #C3D82C
+# color3  = #FFC135
+# color4  = #42A5F5
+# color5  = #D81B60
+# color6  = #00ACC1
+# color7  = #F5F5F5
+# color8  = #708284
+# color9  = #FF5252
+# color10 = #C3D82C
+# color11 = #FFC135
+# color12 = #42A5F5
+# color13 = #D81B60
+# color14 = #00ACC1
+# color15 = #F5F5F5
+
 # Onedark
 cursor = #61afef
 # cursor_foreground = #dcdccc
@@ -46,6 +72,7 @@ foreground = #abb2bf
 background = rgba(40, 44, 52, 0.90)
 # If unset, will reverse foreground and background
 highlight = #3e4452
+
 # Colors from color0 to color254 can be set
 color0 = #282c34
 color1 = #e06c75
