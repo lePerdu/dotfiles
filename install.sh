@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="zsh fish bash nvim kak vis tmux Xdefaults tilix termite"
+all_configs="zsh fish bash nvim kak kak-lsp vis tmux Xdefaults tilix termite"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -83,6 +83,10 @@ for config in $configs; do
             # Link system autoload files
             ln -sf $(which kak)/../share/kak/autoload \
                 $XDG_CONFIG_HOME/kak/autoload/system
+            ;;
+
+        kak-lsp)
+            install_files config/kak-lsp $XDG_CONFIG_HOME/kak-lsp
             ;;
 
         vis)
