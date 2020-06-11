@@ -1,8 +1,12 @@
 package colorman
 package foreign-env
 package fuck
+package license
 package node-binpath
+package open_github
 package pisces
 package sudope
+package vcs
 package z
 theme default
+theme pure

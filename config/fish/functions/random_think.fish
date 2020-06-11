@@ -1,19 +1,10 @@
-
 function random_think
-    set -l cow_dir
-    for dir in /usr{,/local}/share/{cows,cowsay}
-        if test -d $dir
-            set cow_dir $dir
-            break
-        end
-    end
-
-    set -l cows $cow_dir/*.cow
-    set -l n (math 'scale=0;'(random)'%'(count $cows)'+1')
-    if test (math (random)'%2') -eq 0
-        cowthink -f $cows[$n]
+    set -l allcows (cowsay -l | tail -n+2 | string split ' ')
+    set -l cowfile (random choice $allcows)
+    set -l cowopts (random choice b d g p s t w y)
+    if [ (random 0 1) = 1 ]
+        cowsay -n -$cowopts -f $cowfile $argv
     else
-        cowsay -f $cows[$n]
+        cowthink -n -$cowopts -f $cowfile $argv
     end
 end
-
