@@ -16,12 +16,17 @@ command = "rls"
 # roots = []
 # command = "gluon_language-server"
 
-# [language.javascript]
-# filetypes = ["javascript"]
-# roots = ["package.json"]
-# command = "javascript-typescript-stdio"
+[language.javascript]
+filetypes = ["javascript"]
+roots = ["package.json"]
+command = "javascript-typescript-stdio"
 # command = "js-langserver"
 # args = ["--stdio"]
+
+[language.java]
+filetypes = ["java"]
+roots = ["build.gradle", "pom.xml"]
+command = "/Users/zpeltzer/build/java-language-server/dist/lang_server_mac.sh"
 
 [language.json]
 filetypes = ["json"]

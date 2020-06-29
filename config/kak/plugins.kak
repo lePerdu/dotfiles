@@ -53,19 +53,23 @@ plug "ul/kak-lsp" noload do %{ rustup run stable cargo build --release } %{
             --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
     }
 
-    # Debugging for kak-lsp
-    # nop %sh{
-    #     ($kak_config/plugins/kak-lsp/target/release/kak-lsp \
-    #         -s $kak_session -vvv) >/tmp/kak-lsp.log 2>&1 </dev/null &
-    # }
-
-    # hook global BufSetOption tabstop=.* %{
-    #     set-option buffer lsp_tab_size %opt{tabstop}
-    # }
-
     # Show hover information
     map global user h ': lsp-hover<ret>' -docstring 'LSP hover'
     map global normal <a-,> ': enter-user-mode lsp<ret>'
+
+    define-command -hidden setup-auto-format %{
+        hook window BufWritePre .* lsp-formatting-sync
+    }
+
+    hook global WinSetOption filetype=(rust|python||typescript|c|cpp|java) %{
+        lsp-auto-signature-help-enable
+        set-option window lsp_auto_highlight_references true
+        lsp-enable-window
+    }
+
+    hook global WinSetOption filetype=(javascript|haskell) %{
+        lsp-enable-window
+    }
 }
 
 # Other
