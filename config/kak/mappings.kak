@@ -16,8 +16,11 @@ map global user w ': write<ret>'
 map global user W ': write!<ret>'
 map global user z ': write-quit-all<ret>'
 map global user q ': quit!<ret>'
+map global user b ':buffer '
 map global user e ':edit '
 map global user f ':find '
+
+map global prompt <c-n> '<c-a>new <c-e>'
 
 # Don't copy on delete by default
 map global normal d <a-d>

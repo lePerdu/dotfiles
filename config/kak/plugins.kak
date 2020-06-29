@@ -1,13 +1,11 @@
-
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 
 # Have plug.kak manage itself
-plug kakoune-git "andreyorst/plug.kak" noload
+plug "andreyorst/plug.kak" noload
 
 # Editing helpers
 plug "alexherbo2/auto-pairs.kak" %{
     set-option global auto_pairs ( ) [ ] { } ` ` '"' '"' "'" "'"
-    hook global WinCreate .* %{ auto-pairs-enable }
 }
 
 plug "alexherbo2/move-line.kak" %{
@@ -15,9 +13,6 @@ plug "alexherbo2/move-line.kak" %{
     map global normal "'" ': move-line-below<ret>'
 }
 
-# plug "alexherbo2/search-highlighting.kak" %{
-#     hook global WinCreate .* %{ search-highlighter-enable }
-# }
 plug "andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop %opt{tabstop}
     hook global BufSetOption tabstop=.* %{
@@ -32,11 +27,15 @@ plug "andreyorst/smarttab.kak" defer smarttab %{
 	hook global WinCreate .* expandtab
 }
 
-plug "alexherbo2/snippets.kak"
+plug "alexherbo2/search-highlighting.kak"
+
+# plug "alexherbo2/snippets.kak"
 
 plug "Delapouite/kakoune-auto-star"
 plug "Delapouite/kakoune-auto-percent"
 
+# TODO Try to make a better version that does some fancy multiple cursor stuff
+# OR have it be implicit, based on selection size / context
 plug "h-youhei/kakoune-surround" %{
     declare-user-mode surround
     # I don't use view mode that much and view lock mode is more useful anyway
@@ -49,14 +48,16 @@ plug "h-youhei/kakoune-surround" %{
 }
 
 # Commands
-plug "alexherbo2/write-parent-directories.kak" %{
-    hook global WinCreate .* %{ write-parent-directories-enable }
-}
-plug "Delapouite/kakoune-cd"
+
+# plug "alexherbo2/write-parent-directories.kak" %{
+#     hook global WinCreate .* %{ write-parent-directories-enable }
+# }
+
+# plug "Delapouite/kakoune-cd"
 plug "occivink/kakoune-sudo-write"
 
 # Languages
-plug "ul/kak-lsp" noload do %{ rustup run stable cargo build --release } %{
+plug "ul/kak-lsp" noload do %{ cargo +stable build --release } %{
     evaluate-commands %sh{
         $kak_config/plugins/kak-lsp/target/release/kak-lsp \
             --kakoune -s $kak_session -c $kak_config/kak-lsp.toml
@@ -92,11 +93,37 @@ plug "ul/kak-lsp" noload do %{ rustup run stable cargo build --release } %{
 }
 
 # Other
-plug "lenormf/kakoune-extra"
-plug "Delapouite/kakoune-palette"
-# plug "alexherbo2/edit-directory.kak" %{
-#     hook global WinCreate .* %{ edit-directory-enable }
-# }
+plug "lenormf/kakoune-extra" subset %{
+    # This project is not being maintained anymore, but there are a couple
+    # nice things in it
+    # TODO Move these into my own config / a new plugin / new plugins
+
+    autodownload.kak
+    # autosplit.kak
+    # cdmenu.kak
+    comnotes.kak
+    dictcomplete.kak
+    # dvtm.kak
+    # fzf.kak
+    # fzy.kak
+    # grepmenu.kak
+    # hatch_terminal.kak
+    idsession.kak
+    # lineindent.kak
+    # overstrike.kak
+    # readline.kak
+    # searchmarks.kak
+    # syntastic.kak
+    # tldr.kak
+    # utils.kak
+    # vcs.kak
+    # versioncheck.kak
+} %{
+    hook global KakBegin .* idsession
+}
+
+# plug "Delapouite/kakoune-palette"
+
 plug "https://gitlab.com/Screwtapello/kakoune-state-save"
 
 plug "lePerdu/kakboard" %{
@@ -105,8 +132,8 @@ plug "lePerdu/kakboard" %{
     hook global WinCreate .* %{
         kakboard-enable
 
-        map global normal <a-d> ': kakboard-with-push-clipboard d'
-        map global normal <a-c> ': kakboard-with-push-clipboard c'
+        map global normal <a-d> ': kakboard-with-push-clipboard d<ret>'
+        map global normal <a-c> ': kakboard-with-push-clipboard c<ret>'
     }
 }
 
