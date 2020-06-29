@@ -81,7 +81,7 @@ for config in $configs; do
         kak)
             install_files config/kak $XDG_CONFIG_HOME/kak
             # Link system autoload files
-            ln -sf $(which kak)/../share/kak/autoload \
+            ln -sf $(dirname $(which kak))/../share/kak/autoload \
                 $XDG_CONFIG_HOME/kak/autoload/system
             ;;
 
