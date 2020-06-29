@@ -9,7 +9,8 @@ alias l="ls -lh"
 
 abbr v kak
 
-set -x LESS -isFR
+set -x LESS -isR
+
 set -x EDITOR kak
 set -x VISUAL $EDITOR
 
