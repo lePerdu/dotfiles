@@ -18,6 +18,19 @@ plug "alexherbo2/move-line.kak" %{
 # plug "alexherbo2/search-highlighting.kak" %{
 #     hook global WinCreate .* %{ search-highlighter-enable }
 # }
+plug "andreyorst/smarttab.kak" defer smarttab %{
+    set-option global softtabstop %opt{tabstop}
+    hook global BufSetOption tabstop=.* %{
+        set-option buffer softtabstop %opt{tabstop}
+    }
+} %{
+    # Set based on indentwidth
+    hook global BufSetOption indentwidth=0 noexpandtab
+    hook global BufSetOption indentwidth=[1-9].* expandtab
+
+    # Do this by default
+	hook global WinCreate .* expandtab
+}
 
 plug "alexherbo2/snippets.kak"
 
@@ -34,10 +47,6 @@ plug "h-youhei/kakoune-surround" %{
     map global surround t ': select-surrounding-tag<ret>' \
         -docstring 'select tag'
 }
-
-# My implementation is better
-# TODO Submit PR to this
-# plug "https://github.com/alexherbo2/space-indent.kak"
 
 # Commands
 plug "alexherbo2/write-parent-directories.kak" %{
@@ -56,6 +65,16 @@ plug "ul/kak-lsp" noload do %{ rustup run stable cargo build --release } %{
     # Show hover information
     map global user h ': lsp-hover<ret>' -docstring 'LSP hover'
     map global normal <a-,> ': enter-user-mode lsp<ret>'
+
+    # Keep this in sync with indentwidth
+    # TODO Make an issue on the project for this?
+    hook global WinSetOption indentwidth=0 %{
+        set-option window lsp_insert_spaces false
+    }
+
+    hook global WinSetOption indentwidth=[1-9].* %{
+        set-option window lsp_insert_spaces true
+    }
 
     define-command -hidden setup-auto-format %{
         hook window BufWritePre .* lsp-formatting-sync

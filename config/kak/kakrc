@@ -12,33 +12,30 @@ add-highlighter global/ show-matching
 add-highlighter global/ number-lines -hlcursor
 add-highlighter global/ column '%opt{autowrap_column}' AutowrapColumn
 
-# Sync up tabstop and indentwidth
-hook global BufSetOption tabstop=.* %{
-    set-option buffer indentwidth %opt{tabstop}
-}
-
-set-option current tabstop 4
+set-option global tabstop 4
 
 set-option global ui_options ncurses_assistant=none
 
-# Auto-expand tabs to spaces
-# TODO Put this in a plugin
-hook global InsertChar \t %{
-    execute-keys -draft ';h@'
-}
 
-hook global InsertDelete ' ' %{ try %{ execute-keys -draft %sh{
-    # Move indentwidth - 2 to the left
-    if test $kak_opt_indentwidth -le 1; then
-        exit
-    elif test $kak_opt_indentwidth -eq 2; then
-        # This has to be a separate case since 0h is the same as h, not nothing
-        echo ";h"
-    else
-        echo ";h$(( $kak_opt_indentwidth - 2 ))H"
-    fi
-    echo "<a-k>\A +\z<ret>d"
-}}}
+# Using smarttab plugin for this instead
+# # Auto-expand tabs to spaces
+# # TODO Put this in a plugin
+# hook global InsertChar \t %{
+#     execute-keys -draft ';h@'
+# }
+
+# hook global InsertDelete ' ' %{ try %{ execute-keys -draft %sh{
+#     # Move indentwidth - 2 to the left
+#     if test $kak_opt_indentwidth -le 1; then
+#         exit
+#     elif test $kak_opt_indentwidth -eq 2; then
+#         # This has to be a separate case since 0h is the same as h, not nothing
+#         echo ";h"
+#     else
+#         echo ";h$(( $kak_opt_indentwidth - 2 ))H"
+#     fi
+#     echo "<a-k>\A +\z<ret>d"
+# }}}
 
 # Setup IDE-ish mode
 # TODO Not working
