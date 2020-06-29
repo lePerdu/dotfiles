@@ -10,6 +10,8 @@ alias l="ls -lh"
 abbr v kak
 
 set -x LESS -isFR
+set -x EDITOR kak
+set -x VISUAL $EDITOR
 
 if command -sq hub
     alias git=hub
