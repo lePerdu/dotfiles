@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="zsh fish bash nvim kak vis tmux Xdefaults tilix termite"
+all_configs="fish bash kak tilix termite"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -48,16 +48,6 @@ fi
 
 for config in $configs; do
     case $config in
-        tmux)
-            install_files tmux.conf $HOME/.tmux.conf
-            install_files config/tmux $XDG_CONFIG_HOME/tmux
-            ;;
-
-        zsh)
-            install_files zshrc $HOME/.zshrc
-            install_files oh-my-zsh-custom/\* $HOME/.oh-my-zsh/custom
-            ;;
-
         bash)
             install_files bashrc $HOME/.bashrc
             ;;
@@ -67,26 +57,11 @@ for config in $configs; do
             install_files config/omf $XDG_CONFIG_HOME/omf
             ;;
 
-        nvim)
-            install_files config/nvim $XDG_CONFIG_HOME/nvim
-
-            backup_files $HOME/.nvimrc
-            echo "Linking $HOME/.nvimrc to $XDG_CONFIG_HOME/nvim/init.vim"
-            ln -sf $XDG_CONFIG_HOME/nvim/init.vim $HOME/.nvimrc
-
-            # Install dein plugins
-            nvim -c ':call dein#update()' -c ':quit'
-            ;;
-
         kak)
             install_files config/kak $XDG_CONFIG_HOME/kak
             # Link system autoload files
             ln -sf $(dirname $(which kak))/../share/kak/autoload \
                 $XDG_CONFIG_HOME/kak/autoload/system
-            ;;
-
-        vis)
-            install_files config/vis $XDG_CONFIG_HOME/vis
             ;;
 
         tilix)
@@ -95,10 +70,6 @@ for config in $configs; do
 
         termite)
             install_files config/termite $XDG_CONFIG_HOME/termite
-            ;;
-
-        Xdefaults)
-            install_files Xdefaults $HOME/.Xdefaults
             ;;
 
         *)

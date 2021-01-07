@@ -125,7 +125,4 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-[ -r /home/cybele/.byobu/prompt ] && . /home/cybele/.byobu/prompt   #byobu-prompt#
-
-[[ "$PS1" ]] && [[ $(command -v tmux) ]] && [[ -z $TMUX ]] && exec tmux
 
