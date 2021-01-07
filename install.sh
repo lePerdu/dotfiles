@@ -6,15 +6,14 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="bash editorconfig fish git kak termite tilix"
+all_configs="bash editorconfig fish git kak libinput-gestures termite tilix"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
 }
 
 backup_files() {
-    return
-    if test -f "$1"; then
+    if test -e "$1"; then
         echo "Copying $1 to $1~"
         mv "$1" "$1~"
     fi
@@ -54,6 +53,7 @@ for config in $configs; do
 
         editorconfig)
             install_files editorconfig $HOME/.editorconfig
+            ;;
 
         fish)
             install_files config/fish $XDG_CONFIG_HOME/fish
@@ -62,6 +62,7 @@ for config in $configs; do
 
         git)
             install_files gitconfig $HOME/.gitconfig
+            ;;
 
         kak)
             install_files config/kak $XDG_CONFIG_HOME/kak
@@ -73,6 +74,7 @@ for config in $configs; do
         libinput-gestures)
             install_files config/libinput-gestures.conf \
                 $XDG_CONFIG_HOME/libinput-gestures.conf
+            ;;
 
         termite)
             install_files config/termite $XDG_CONFIG_HOME/termite
