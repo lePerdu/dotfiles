@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="bash fish git kak termite tilix"
+all_configs="bash editorconfig fish git kak termite tilix"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -51,6 +51,9 @@ for config in $configs; do
         bash)
             install_files bashrc $HOME/.bashrc
             ;;
+
+        editorconfig)
+            install_files editorconfig $HOME/.editorconfig
 
         fish)
             install_files config/fish $XDG_CONFIG_HOME/fish
