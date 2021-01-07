@@ -70,6 +70,10 @@ for config in $configs; do
                 $XDG_CONFIG_HOME/kak/autoload/system
             ;;
 
+        libinput-gestures)
+            install_files config/libinput-gestures.conf \
+                $XDG_CONFIG_HOME/libinput-gestures.conf
+
         termite)
             install_files config/termite $XDG_CONFIG_HOME/termite
             ;;
