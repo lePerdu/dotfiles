@@ -23,11 +23,6 @@ command = "javascript-typescript-stdio"
 # command = "js-langserver"
 # args = ["--stdio"]
 
-[language.java]
-filetypes = ["java"]
-roots = ["build.gradle", "pom.xml"]
-command = "/Users/zpeltzer/build/java-language-server/dist/lang_server_mac.sh"
-
 [language.json]
 filetypes = ["json"]
 roots = ["package.json"]
@@ -78,8 +73,8 @@ args = [
 [language.haskell]
 filetypes = ["haskell"]
 roots = ["Setup.hs", "stack.yaml", "*.cabal"]
-command = "hie-wrapper"
-args = ["--debug", "--lsp"]
+command = "haskell-language-server-wrapper"
+args = ["--lsp"]
 
 [language.elm]
 filetypes = ["elm"]

@@ -1,11 +1,11 @@
 # Kakoune user configuration
 #
 
-set-option current autowrap_column 80
+set-option global autowrap_column 81
 
-hook global WinCreate .* %{
-    autowrap-enable
-}
+# hook global WinCreate .* %{
+#     autowrap-enable
+# }
 
 add-highlighter global/ wrap -word -indent -marker '↳ '
 add-highlighter global/ show-matching

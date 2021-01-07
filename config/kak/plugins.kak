@@ -3,28 +3,29 @@ source "%val{config}/plugins/plug.kak/rc/plug.kak"
 # Have plug.kak manage itself
 plug "andreyorst/plug.kak" noload
 
-# Editing helpers
-plug "alexherbo2/auto-pairs.kak" %{
-    set-option global auto_pairs ( ) [ ] { } ` ` '"' '"' "'" "'"
-}
+plug "alexherbo2/prelude.kak" defer prelude %{} demand
 
-plug "alexherbo2/move-line.kak" %{
+# Editing helpers
+plug "alexherbo2/auto-pairs.kak" defer auto-pairs %{
+    set-option global auto_pairs ( ) [ ] { } ` ` '"' '"' "'" "'"
+
+    auto-pairs-enable
+} demand
+
+plug "alexherbo2/move-line.kak" defer move-line %{
     map global normal "<a-'>" ': move-line-above<ret>'
     map global normal "'" ': move-line-below<ret>'
-}
+} demand
 
 plug "andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop %opt{tabstop}
+    # Keep softtabstop in syn with tabstop
     hook global BufSetOption tabstop=.* %{
         set-option buffer softtabstop %opt{tabstop}
     }
 } %{
-    # Set based on indentwidth
-    hook global BufSetOption indentwidth=0 noexpandtab
-    hook global BufSetOption indentwidth=[1-9].* expandtab
-
     # Do this by default
-	hook global WinCreate .* expandtab
+    # hook global BufCreate .* expandtab
 }
 
 plug "alexherbo2/search-highlighting.kak"
@@ -67,6 +68,9 @@ plug "ul/kak-lsp" noload do %{ cargo +stable build --release } %{
     map global user h ': lsp-hover<ret>' -docstring 'LSP hover'
     map global normal <a-,> ': enter-user-mode lsp<ret>'
 
+	# Rename
+    map global lsp R ': lsp-rename-prompt<ret>' -docstring 'rename symbol'
+
     # Keep this in sync with indentwidth
     # TODO Make an issue on the project for this?
     hook global WinSetOption indentwidth=0 %{
@@ -81,7 +85,7 @@ plug "ul/kak-lsp" noload do %{ cargo +stable build --release } %{
         hook window BufWritePre .* lsp-formatting-sync
     }
 
-    hook global WinSetOption filetype=(rust|python||typescript|c|cpp|java) %{
+    hook global WinSetOption filetype=(rust|python|typescript|c|cpp|java) %{
         lsp-auto-signature-help-enable
         set-option window lsp_auto_highlight_references true
         lsp-enable-window
