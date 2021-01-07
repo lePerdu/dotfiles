@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="fish bash kak tilix termite"
+all_configs="bash fish git kak termite tilix"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -57,6 +57,9 @@ for config in $configs; do
             install_files config/omf $XDG_CONFIG_HOME/omf
             ;;
 
+        git)
+            install_files gitconfig $HOME/.gitconfig
+
         kak)
             install_files config/kak $XDG_CONFIG_HOME/kak
             # Link system autoload files
@@ -64,12 +67,12 @@ for config in $configs; do
                 $XDG_CONFIG_HOME/kak/autoload/system
             ;;
 
-        tilix)
-            install_files config/tilix $XDG_CONFIG_HOME/tilix
-            ;;
-
         termite)
             install_files config/termite $XDG_CONFIG_HOME/termite
+            ;;
+
+        tilix)
+            install_files config/tilix $XDG_CONFIG_HOME/tilix
             ;;
 
         *)

@@ -1,0 +1,7 @@
+[user]
+	name = lePerdu
+	email = zdpeltzer@gmail.com
+[core]
+	autocrlf = input
+[pull]
+	rebase = true
