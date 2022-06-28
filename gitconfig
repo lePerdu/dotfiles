@@ -1,7 +1,26 @@
+[init]
+defaultBranch = main
+
 [user]
-	name = lePerdu
-	email = zdpeltzer@gmail.com
+useConfigOnly = true
+
 [core]
-	autocrlf = input
+autocrlf = input
+
 [pull]
-	rebase = true
+rebase = true
+
+[rebase]
+autoStash = true
+
+[fetch]
+prune = true
+
+[diff]
+colorMoved = zebra
+
+[includeIf "gitdir:/home/shared/workspace/"]
+path = /home/zach/.gitconfig-local
+
+[includeIf "gitdir:/home/shared/workspace/zoetis/"]
+path = /home/shared/workspace/zoetis/.gitconfig
