@@ -7,11 +7,9 @@ alias free="free -h"
 
 alias l="ls -lh"
 
-abbr v kak
-
 set -x LESS -isR
 
-set -x EDITOR kak
+set -x EDITOR vi
 set -x VISUAL $EDITOR
 
 if command -sq hub
