@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="bash editorconfig emacs fish git kak libinput-gestures termite tilix"
+all_configs="bash editorconfig emacs fish git libinput-gestures termite tilix"
 default_configs="editorconfig emacs fish git"
 
 command_exists() {
@@ -66,13 +66,6 @@ for config in $configs; do
 
         git)
             install_files gitconfig $HOME/.gitconfig
-            ;;
-
-        kak)
-            install_files config/kak $XDG_CONFIG_HOME/kak
-            # Link system autoload files
-            ln -sf $(dirname $(which kak))/../share/kak/autoload \
-                $XDG_CONFIG_HOME/kak/autoload/system
             ;;
 
         libinput-gestures)
