@@ -57,7 +57,6 @@ for config in $configs; do
 
         fish)
             install_files config/fish $XDG_CONFIG_HOME/fish
-            install_files config/omf $XDG_CONFIG_HOME/omf
             ;;
 
         git)
