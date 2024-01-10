@@ -15,3 +15,11 @@ config/fish/fish_variables
 
 config/kak/plugins
 config/kak/autoload/system
+
+config/emacs/eln-cache/
+config/emacs/elpa/
+config/emacs/projects
+config/emacs/transient/
+config/emacs/eshell/
+config/emacs/tramp
+config/emacs/tree-sitter/
