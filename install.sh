@@ -6,8 +6,8 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="bash editorconfig emacs fish git"
-default_configs="editorconfig emacs fish git"
+all_configs="editorconfig emacs fish git"
+default_configs="$all_configs"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -48,10 +48,6 @@ fi
 
 for config in $configs; do
     case $config in
-        bash)
-            install_files bashrc $HOME/.bashrc
-            ;;
-
         editorconfig)
             install_files editorconfig $HOME/.editorconfig
             ;;
