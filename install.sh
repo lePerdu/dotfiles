@@ -6,7 +6,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 
 cp_cmd="ln -sf"
 
-all_configs="bash editorconfig emacs fish git libinput-gestures termite tilix"
+all_configs="bash editorconfig emacs fish git"
 default_configs="editorconfig emacs fish git"
 
 command_exists() {
@@ -66,19 +66,6 @@ for config in $configs; do
 
         git)
             install_files gitconfig $HOME/.gitconfig
-            ;;
-
-        libinput-gestures)
-            install_files config/libinput-gestures.conf \
-                $XDG_CONFIG_HOME/libinput-gestures.conf
-            ;;
-
-        termite)
-            install_files config/termite $XDG_CONFIG_HOME/termite
-            ;;
-
-        tilix)
-            install_files config/tilix $XDG_CONFIG_HOME/tilix
             ;;
 
         *)
