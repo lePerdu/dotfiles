@@ -7,6 +7,7 @@ XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 cp_cmd="ln -sf"
 
 all_configs="bash editorconfig fish git kak libinput-gestures termite tilix"
+default_configs="editorconfig fish git"
 
 command_exists() {
     command -v $1 > /dev/null 2>&1
@@ -42,7 +43,7 @@ shift $(( $OPTIND - 1 ))
 
 configs="$*"
 if test -z "$configs"; then
-    configs="$all_configs"
+    configs="$default_configs"
 fi
 
 for config in $configs; do
