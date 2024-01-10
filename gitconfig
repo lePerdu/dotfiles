@@ -7,6 +7,9 @@ useConfigOnly = true
 [core]
 autocrlf = input
 
+[push]
+autoSetupRemote = true
+
 [pull]
 rebase = true
 
@@ -15,12 +18,22 @@ autoStash = true
 
 [fetch]
 prune = true
+pruneTags = true
 
 [diff]
 colorMoved = zebra
 
-[includeIf "gitdir:/home/shared/workspace/"]
-path = /home/zach/.gitconfig-local
+[include]
+path = ~/.gitconfig-local
+
+# git is picky about the path normalization, so include all the
+# possibilities on my different systems
+
+[includeIf "gitdir:/home/zach/workspace/zoetis/"]
+path = ~/workspace/zoetis/.gitconfig
 
 [includeIf "gitdir:/home/shared/workspace/zoetis/"]
-path = /home/shared/workspace/zoetis/.gitconfig
+path = ~/workspace/zoetis/.gitconfig
+
+[includeIf "gitdir:/shared/workspace/zoetis/"]
+path = ~/workspace/zoetis/.gitconfig
