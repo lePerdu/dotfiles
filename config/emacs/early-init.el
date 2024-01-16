@@ -3,8 +3,10 @@
 ;; `package-initialize'.
 
 (defvar opam-command
-  (let ((command "~/.opam/default/bin/opam"))
-    (and (file-executable-p command) command))
+  (let ((opam-switch-command (expand-file-name "~/.opam/default/bin/opam")))
+    (if (file-executable-p opam-switch-command)
+	opam-switch-command
+      (executable-find "opam")))
   "Location of OPAM executable.")
 
 (defvar opam-site-lisp
