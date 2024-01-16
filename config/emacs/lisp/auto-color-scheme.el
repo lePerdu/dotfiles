@@ -19,6 +19,9 @@
 (defvar auto-color-scheme-default-theme nil
   "Theme to use if the system has no preference.")
 
+(defvar auto-color-scheme-use-old-dbus-read-method nil
+  "Whether to use the old (deprecated) D-Bus API for reading the setting.")
+
 (defun auto-color-scheme--handle-changed (namespace key value)
   "Update the Emacs theme to match system light/dark mode.
 
@@ -74,10 +77,16 @@ out of sync with the system preference."
    "org.freedesktop.portal.Desktop"
    "/org/freedesktop/portal/desktop"
    "org.freedesktop.portal.Settings"
-   "ReadOne"
+   (if auto-color-scheme-use-old-dbus-read-method
+       "Read"
+     "ReadOne")
    (lambda (value)
      (auto-color-scheme--handle-changed
-      "org.freedesktop.appearance" "color-scheme" value))
+      "org.freedesktop.appearance"
+      "color-scheme"
+      (if auto-color-scheme-use-old-dbus-read-method
+          (car value)
+        value)))
    "org.freedesktop.appearance"
    "color-scheme"))
 

@@ -70,6 +70,7 @@
   :load-path "~/.config/emacs/lisp"
   :config
   (setq auto-color-scheme-dark-theme 'dracula)
+  (setq auto-color-scheme-use-old-dbus-read-method t)
   (auto-color-scheme-activate))
 
 (use-package company
