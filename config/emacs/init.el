@@ -72,6 +72,16 @@
   (setq auto-color-scheme-dark-theme 'dracula)
   (auto-color-scheme-activate))
 
+(use-package company
+  :hook
+  ((prog-mode text-mode eshell-mode comint-mode) . company-mode)
+  :bind
+  (:map company-mode-map
+        ("TAB" . company-indent-or-complete-common)))
+
+(use-package iedit
+  :bind ("C-;" . iedit-mode))
+
 (use-package flymake
   :bind (:map flymake-mode-map
               ("M-n" . flymake-goto-next-error)
@@ -84,6 +94,13 @@
   :bind (:map flycheck-mode-map
               ("M-n" . flycheck-next-error)
               ("M-p" . flycheck-previous-error)))
+
+(use-package flyspell
+  :bind
+  (:map flyspell-mode-map
+		;; `iedit' mode uses the same keybinding
+		;; TODO Find an alternative binding for `flyspell-auto-correct-previous-word'?
+		("C-;" . nil)))
 
 (use-package typescript-ts-mode)
 (use-package yaml-ts-mode
@@ -103,6 +120,10 @@
   :hook (tuareg-mode . merlin-mode))
 
 (use-package merlin-company
+  :ensure nil
+  :load-path opam-site-lisp)
+
+(use-package merlin-iedit
   :ensure nil
   :load-path opam-site-lisp)
 
@@ -164,13 +185,6 @@
 
 (use-package magit
   :config (add-hook 'after-save-hook 'magit-after-save-refresh-status t))
-
-(use-package company
-  :hook
-  ((prog-mode text-mode eshell-mode comint-mode) . company-mode)
-  :bind
-  (:map company-mode-map
-        ("TAB" . company-indent-or-complete-common)))
 
 (defun eglot-format-on-save ()
   "Setup EMACS to use eglot-format-buffer before saving."
