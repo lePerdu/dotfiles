@@ -1,7 +1,52 @@
-(setq custom-file "~/.config/emacs/custom.el")
-(load custom-file)
+;; TODO Use `custom-set-variables' instead of mixing `setq' and mode functions
+
+;;; Use UTF-8
 
 (set-default-coding-systems 'utf-8-unix)
+(setq current-language-environment "UTF-8")
+
+;;; Auto-save and backups
+
+(setq auto-save-default nil)
+(setq auto-save-visited-interval 30)
+(auto-save-visited-mode)
+
+(setq backup-directory-alist '(("." . "~/.config/emacs/backup")))
+(setq create-lockfiles nil)
+
+;;; Misc editing functionality
+
+(delete-selection-mode)
+(setq-default cursor-type 'bar)
+(column-number-mode)
+(setq display-line-numbers-type 'relative)
+(electric-pair-mode)
+(indent-tabs-mode -1)
+(setq-default require-final-newline t)
+(setq-default tab-width 4)
+(setq-default tab-always-indent t)
+(setq set-mark-command-repeat-pop t)
+(setq use-short-answers t)
+(setq next-error-highlight t)
+(setq next-error-highlight-no-select t)
+(setq-default parse-sexp-ignore-comments t)
+(setq search-whitespace-regexp "[-_ \\t\\r\\n]+")
+
+;;; Frame config
+;; (setq inhibit-startup-screen t)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;;; Mini-buffer
+
+;; TODO This is probably only necessary in certain mode
+;; (setq compilation-error-screen-columns nil)
+(setq completion-styles '(partial-completion flex))
+(fido-vertical-mode)
+(minibuffer-electric-default-mode)
+
+(setq dired-listing-switches "-alh")
 
 ;; TODO Figure out how to better synchronize PATH between EMACS and system shell
 ;; - Use shell in login process so that EMACS is a subprocess of it?
@@ -19,6 +64,11 @@
   (setq show-trailing-whitespace t))
 
 (add-hook 'prog-mode-hook #'my-set-prog-mode-vars)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'flyspell-prog-mode)
+
+(add-hook 'text-mode-hook #'turn-on-flyspell)
+(add-hook 'text-mode-hook #'turn-on-auto-fill)
 
 ;; Tree-sitter grammar sources
 (setq treesit-language-source-alist
@@ -59,6 +109,10 @@
   (add-to-list 'major-mode-remap-alist mode-pair))
 
 (require 'use-package)
+(setq use-package-always-ensure t)
+
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
 
 (use-package dracula-theme)
 
@@ -195,14 +249,19 @@
     (remove-hook 'before-save-hook #'eglot-format-buffer t)))
 
 (use-package eglot
-  :config (add-hook 'eglot-managed-mode-hook 'eglot-format-on-save)
-  :hook ((js-base-mode
-          typescript-ts-base-mode
-          c-mode-common
-          c-ts-base-mode)
-         . eglot-ensure)
-  :bind (:map eglot-mode-map
-              ("C-c a" . eglot-code-actions)))
+  :custom
+  (eglot-confirm-server-initiated-edits nil "Don't require confirmation for edits.")
+  :config
+  (add-hook 'eglot-managed-mode-hook 'eglot-format-on-save)
+  :hook
+  ((js-base-mode
+    typescript-ts-base-mode
+    c-mode-common
+    c-ts-base-mode)
+   . eglot-ensure)
+  :bind
+  (:map eglot-mode-map
+        ("C-c a" . eglot-code-actions)))
 
 ;; Use mouse buttons for forward/back (works in info, help, etc.)
 (keymap-global-set "<mouse-8>" "<XF86Back>")
@@ -223,7 +282,6 @@
 
 (keymap-global-set "C-c i" #'my-edit-init-file)
 (keymap-set ctl-x-4-map "i" #'my-edit-init-file-other-window)
-(keymap-global-set "C-c e" #'eshell)
 
 (defun kill-this-buffer-always ()
   "Kill the current buffer.
@@ -238,5 +296,9 @@ This is like `kill-this-buffer', but works when called interactively.
    (t
     (kill-buffer (current-buffer)))))
 
-(keymap-global-set "C-c k" #'kill-this-buffer-always)
+(keymap-global-set "C-x k" #'kill-this-buffer-always)
 (keymap-global-set "C-c p" #'delete-pair)
+(keymap-global-set "C-c DEL" #'switch-to-prev-buffer)
+(keymap-global-set "M-o" #'other-window)
+(keymap-global-set "<f1>" #'magit-status)
+(keymap-global-set "<f2>" #'eshell)
