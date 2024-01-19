@@ -145,18 +145,10 @@
 
 (use-package iedit)
 
-(use-package flymake
-  :bind (:map flymake-mode-map
-              ("M-n" . flymake-goto-next-error)
-              ("M-p" . flymake-goto-prev-error)))
-
 (use-package flycheck
   :custom
   (flycheck-global-modes '(tuareg-mode emacs-lisp-mode))
-  (global-flycheck-mode t "Enable Flycheck globally.")
-  :bind (:map flycheck-mode-map
-              ("M-n" . flycheck-next-error)
-              ("M-p" . flycheck-previous-error)))
+  (global-flycheck-mode t "Enable Flycheck globally."))
 
 (use-package flyspell
   :bind
@@ -310,3 +302,5 @@ This is like `kill-this-buffer', but works when called interactively.
 (keymap-global-set "M-o" #'other-window)
 (keymap-global-set "<f1>" #'magit-status)
 (keymap-global-set "<f2>" #'eshell)
+(keymap-global-set "M-n" #'next-error)
+(keymap-global-set "M-p" #'previous-error)
