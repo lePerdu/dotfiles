@@ -43,6 +43,7 @@
  '(menu-bar-mode nil)
  '(tool-bar-mode nil)
  '(scroll-bar-mode nil))
+(modify-all-frames-parameters '((fullscreen . fullboth)))
 
 ;;; Mini-buffer
 
