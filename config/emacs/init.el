@@ -1,52 +1,60 @@
 ;; TODO Use `custom-set-variables' instead of mixing `setq' and mode functions
 
+;; TODO Is there a better way to disable `customize-save-customized'?
+(custom-set-variables '(custom-file "/dev/null"))
+
 ;;; Use UTF-8
 
 (set-default-coding-systems 'utf-8-unix)
-(setq current-language-environment "UTF-8")
+(custom-set-variables
+ '(current-language-environment "UTF-8"))
 
 ;;; Auto-save and backups
 
-(setq auto-save-default nil)
-(setq auto-save-visited-interval 30)
-(auto-save-visited-mode)
-
-(setq backup-directory-alist '(("." . "~/.config/emacs/backup")))
-(setq create-lockfiles nil)
+(custom-set-variables
+ '(auto-save-default nil)
+ '(auto-save-visited-interval 30)
+ '(auto-save-visited-mode t)
+ '(backup-directory-alist '(("." . "~/.config/emacs/backup")))
+ '(create-lockfiles nil))
 
 ;;; Misc editing functionality
 
-(delete-selection-mode)
-(setq-default cursor-type 'bar)
-(column-number-mode)
-(setq display-line-numbers-type 'relative)
-(electric-pair-mode)
-(indent-tabs-mode -1)
-(setq-default require-final-newline t)
-(setq-default tab-width 4)
-(setq-default tab-always-indent t)
-(setq set-mark-command-repeat-pop t)
-(setq use-short-answers t)
-(setq next-error-highlight t)
-(setq next-error-highlight-no-select t)
-(setq-default parse-sexp-ignore-comments t)
-(setq search-whitespace-regexp "[-_ \\t\\r\\n]+")
+(custom-set-variables
+ '(delete-selection-mode t)
+ '(cursor-type 'bar)
+ '(column-number-mode t)
+ '(display-line-numbers-type 'relative)
+ '(electric-pair-mode t)
+ '(indent-tabs-mode nil)
+ '(require-final-newline t)
+ '(tab-width 4)
+ '(tab-always-indent t)
+ '(set-mark-command-repeat-pop t)
+ '(use-short-answers t)
+ '(next-error-highlight t)
+ '(next-error-highlight-no-select t)
+ '(parse-sexp-ignore-comments t)
+ '(search-whitespace-regexp "[-_ \\t\\r\\n]+"))
 
 ;;; Frame config
-;; (setq inhibit-startup-screen t)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+(custom-set-variables
+ ;; '(inhibit-startup-screen t)
+ '(menu-bar-mode nil)
+ '(tool-bar-mode nil)
+ '(scroll-bar-mode nil))
 
 ;;; Mini-buffer
 
 ;; TODO This is probably only necessary in certain mode
 ;; (setq compilation-error-screen-columns nil)
-(setq completion-styles '(partial-completion flex))
-(fido-vertical-mode)
-(minibuffer-electric-default-mode)
+(custom-set-variables
+ '(completion-styles '(partial-completion flex))
+ '(fido-vertical-mode t)
+ '(minibuffer-electric-default-mode t))
 
-(setq dired-listing-switches "-alh")
+(custom-set-variables
+ '(dired-listing-switches "-alh"))
 
 ;; TODO Figure out how to better synchronize PATH between EMACS and system shell
 ;; - Use shell in login process so that EMACS is a subprocess of it?
@@ -109,8 +117,8 @@
   (add-to-list 'major-mode-remap-alist mode-pair))
 
 (require 'use-package)
-(setq use-package-always-ensure t)
-
+(custom-set-variables
+ '(use-package-always-ensure t))
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
@@ -134,8 +142,7 @@
   (:map company-mode-map
         ("TAB" . company-indent-or-complete-common)))
 
-(use-package iedit
-  :bind ("C-;" . iedit-mode))
+(use-package iedit)
 
 (use-package flymake
   :bind (:map flymake-mode-map
